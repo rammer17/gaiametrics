@@ -8,5 +8,7 @@ namespace GaiaMetrics
         public GaiaMetricsDbContext(DbContextOptions<GaiaMetricsDbContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
         public DbSet<Contributor> Contributors { get; set; }
+        public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
+
     }
 }
