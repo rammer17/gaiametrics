@@ -3,6 +3,7 @@ using GaiaMetrics.Models.Request;
 using GaiaMetrics.Models.Response;
 using GaiaMetrics.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -70,17 +71,38 @@ namespace GaiaMetrics.Controllers
         [HttpPost]
         public ActionResult<UserLoginResponse> Login(UserLoginRequest request)
         {
-            if (!_dbContext.Users.Any(x => x.Username == request.Username))
+            //if the username is not correct return, there is no way to know which user attempted the login
+            if (!_dbContext.Users.Any(x => EF.Functions.Collate(x.Username, "SQL_Latin1_General_CP1_CS_AS") == request.Username))
             {
-                return BadRequest("Incorrect credentials.");
+                return BadRequest("Incorrect username");
             }
 
+            //check if the user with the username is locked, if locked return 
+            if (_dbContext.Users.Where(x => EF.Functions.Collate(x.Username, "SQL_Latin1_General_CP1_CS_AS") == request.Username).First().DateLockedTo > DateTime.UtcNow)
+            {
+                return BadRequest("Too many login attempts. Please try again later.");
+            }
+
+            //if a user with the given username already exists and is not locked out try to pull a user object with the password
             var user = _dbContext.Users
-                .Where(x => x.Username == request.Username && x.Password == _cryptographyService.ComputeSha256Hash(request.Password))
+                .Where(x => EF.Functions.Collate(x.Username, "SQL_Latin1_General_CP1_CS_AS") == request.Username && x.Password == _cryptographyService.ComputeSha256Hash(request.Password))
                 .FirstOrDefault();
 
+            //if password is incorrect but username is correct increse login attempt count of the user by 1
             if (user == null)
             {
+                var userFailedLogin = _dbContext.Users
+                    .Where(x => EF.Functions.Collate(x.Username, "SQL_Latin1_General_CP1_CS_AS") == request.Username)
+                    .First();
+
+                userFailedLogin.LoginAttemptCount++;
+                if (userFailedLogin.LoginAttemptCount >= 5)
+                {
+                    userFailedLogin.DateLockedTo = DateTime.UtcNow.AddHours(2);
+                    userFailedLogin.LoginAttemptCount = 0;
+                }
+
+                _dbContext.SaveChanges();
                 return BadRequest("Incorrect credentials.");
             }
 

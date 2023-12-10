@@ -17,6 +17,8 @@ namespace GaiaMetrics.Models.DB
         public string Password { get; set; } = string.Empty;
 
         public DateTime? SubscriptionExpiryTime { get; set; } = null;
+        public int LoginAttemptCount { get; set; }
+        public DateTime DateLockedTo { get; set; }
 
 
         //Optional 1:1
