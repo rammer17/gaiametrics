@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "vl6RlfyGsL2mz+1Sy+qv0aCYhlsA6BjV91v12MiaEjqyDFhof1S8f2iZ2+K/nIqxeaX+gg21PK9ckuB7pdKEMQ==",
+  "dgSpecHash": "u3yS1ukqwvhqGUdvIrElaU9AIfjy1AS7qjtd04ZkQp66r/41IXX22vyueO+3Yd0y25l5T7e1OkVzv/uPWju54w==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Dani\\source\\repos\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics\\GaiaMetrics.csproj",
+  "projectFilePath": "C:\\Users\\Dani\\source\\repos\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Dani\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
     "C:\\Users\\Dani\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",

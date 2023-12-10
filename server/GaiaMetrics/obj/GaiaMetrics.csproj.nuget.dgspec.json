@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Dani\\source\\repos\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics\\GaiaMetrics.csproj": {}
+    "C:\\Users\\Dani\\source\\repos\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Dani\\source\\repos\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics\\GaiaMetrics.csproj": {
+    "C:\\Users\\Dani\\source\\repos\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Dani\\source\\repos\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics\\GaiaMetrics.csproj",
+        "projectUniqueName": "C:\\Users\\Dani\\source\\repos\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj",
         "projectName": "GaiaMetrics",
-        "projectPath": "C:\\Users\\Dani\\source\\repos\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics\\GaiaMetrics.csproj",
+        "projectPath": "C:\\Users\\Dani\\source\\repos\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj",
         "packagesPath": "C:\\Users\\Dani\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Dani\\source\\repos\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics\\obj\\",
+        "outputPath": "C:\\Users\\Dani\\source\\repos\\gaiametrics\\server\\GaiaMetrics\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
