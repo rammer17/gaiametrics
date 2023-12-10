@@ -4,6 +4,7 @@ using GaiaMetrics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GaiaMetrics.Migrations
 {
     [DbContext(typeof(GaiaMetricsDbContext))]
-    partial class GaiaMetricsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231210125425_RenamedSubscriptionPlanDuration")]
+    partial class RenamedSubscriptionPlanDuration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,7 +97,7 @@ namespace GaiaMetrics.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("SubscriptionExpiryTime")
+                    b.Property<DateTime>("SubscriptionExpiryTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("SubscriptionPlanId")

@@ -16,7 +16,7 @@ namespace GaiaMetrics.Models.DB
         [Required]
         public string Password { get; set; } = string.Empty;
 
-        public DateTime SubscriptionExpiryTime { get; set; }
+        public DateTime? SubscriptionExpiryTime { get; set; } = null;
 
 
         //Optional 1:1

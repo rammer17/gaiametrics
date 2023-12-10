@@ -66,3 +66,4 @@ C:\Users\Dani\source\repos\gaiametrics\server\GaiaMetrics\obj\Debug\net6.0\refin
 C:\Users\Dani\source\repos\gaiametrics\server\GaiaMetrics\obj\Debug\net6.0\GaiaMetrics.pdb
 C:\Users\Dani\source\repos\gaiametrics\server\GaiaMetrics\obj\Debug\net6.0\GaiaMetrics.genruntimeconfig.cache
 C:\Users\Dani\source\repos\gaiametrics\server\GaiaMetrics\obj\Debug\net6.0\ref\GaiaMetrics.dll
+C:\Users\Dani\source\repos\gaiametrics\server\GaiaMetrics\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

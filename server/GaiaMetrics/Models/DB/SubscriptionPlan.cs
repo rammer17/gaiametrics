@@ -10,7 +10,7 @@ namespace GaiaMetrics.Models.DB
         [Required]
         public double Price { get; set; }
         [Required]
-        public TimeSpan Duration { get; set; }
+        public TimeSpan SubscriptionDuration { get; set; }
 
         //Required M:1
         public ICollection<User> Users { get; set; } = new List<User>();

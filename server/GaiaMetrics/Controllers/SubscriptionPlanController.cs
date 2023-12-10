@@ -1,6 +1,8 @@
 ﻿using GaiaMetrics.Models.DB;
 using GaiaMetrics.Models.Request;
 using GaiaMetrics.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GaiaMetrics.Controllers
@@ -14,6 +16,7 @@ namespace GaiaMetrics.Controllers
         {
             _dbContext = dbContext;
         }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public IActionResult Create(SubscriptionPlanCreateRequest request) 
         {
@@ -31,6 +34,7 @@ namespace GaiaMetrics.Controllers
             {
                 Title = request.Title,
                 Price = request.Price,
+                SubscriptionDuration = TimeSpan.FromDays(request.SubscriptionDurationDays)
             };
             _dbContext.SubscriptionPlans.Add(subscriptionPlanToAdd);
             _dbContext.SaveChanges();
