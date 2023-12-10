@@ -14,7 +14,13 @@ namespace GaiaMetrics.Models.DB
         [Required]
         public string? Password { get; set; }
 
+
+        //Optional 1:1
         public Contributor? Contributor { get; set; }
+
+        //Required 1:M
+        public int SubscriptionPlanId { get; set; }
+        public SubscriptionPlan SubscriptionPlan { get; set; } = null!;
 
     }
 }
