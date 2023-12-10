@@ -9,6 +9,8 @@ namespace GaiaMetrics.Models.DB
         public string Title { get; set; } = string.Empty;
         [Required]
         public double Price { get; set; }
+        [Required]
+        public TimeSpan Duration { get; set; }
 
         //Required M:1
         public ICollection<User> Users { get; set; } = new List<User>();

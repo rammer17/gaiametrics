@@ -43,7 +43,7 @@ namespace GaiaMetrics.Controllers
 
             if (freeSubscriptionPlan == null) 
             {
-                return BadRequest("Unable to set free subscription plan to user.");
+                return BadRequest("Free subscription plan not found.");
             }
 
             User userToAdd = new User
@@ -54,7 +54,7 @@ namespace GaiaMetrics.Controllers
                 Email = request.Email,
                 Password = _cryptographyService.ComputeSha256Hash(request.Password),
                 SubscriptionPlan = freeSubscriptionPlan,
-                SubscriptionPlanId = freeSubscriptionPlan.Id
+                SubscriptionPlanId = freeSubscriptionPlan.Id,
             };
             _dbContext.Users.Add(userToAdd);
             _dbContext.SaveChanges();
