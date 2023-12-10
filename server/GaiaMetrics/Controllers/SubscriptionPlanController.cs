@@ -1,5 +1,6 @@
 ﻿using GaiaMetrics.Models.DB;
 using GaiaMetrics.Models.Request;
+using GaiaMetrics.Models.Response;
 using GaiaMetrics.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +16,20 @@ namespace GaiaMetrics.Controllers
         public SubscriptionPlanController(GaiaMetricsDbContext dbContext)
         {
             _dbContext = dbContext;
+        }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet]
+        public ActionResult<List<SubscriptionPlanGetResponse>> GetAll()
+        {
+            var subscriptionPlans = _dbContext.SubscriptionPlans
+                .Select(x => new SubscriptionPlanGetResponse()
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Price = x.Price,
+                    SubscriptionDurationDays = x.SubscriptionDuration.Days
+                });
+            return Ok(subscriptionPlans);
         }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
@@ -39,6 +54,21 @@ namespace GaiaMetrics.Controllers
             _dbContext.SubscriptionPlans.Add(subscriptionPlanToAdd);
             _dbContext.SaveChanges();
 
+            return Ok();
+        }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpDelete]
+        public IActionResult Delete(int id)
+        {
+            var subscriptionPlanToDelete = _dbContext.SubscriptionPlans.Where(x => x.Id == id).FirstOrDefault();
+
+            if(subscriptionPlanToDelete == null) 
+            {
+                return BadRequest(ErrorMessages.InvalidId);
+            }
+
+            _dbContext.SubscriptionPlans.Remove(subscriptionPlanToDelete);
+            _dbContext.SaveChanges();
             return Ok();
         }
     }

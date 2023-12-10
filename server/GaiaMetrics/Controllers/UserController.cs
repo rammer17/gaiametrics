@@ -2,6 +2,8 @@
 using GaiaMetrics.Models.Request;
 using GaiaMetrics.Models.Response;
 using GaiaMetrics.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,11 +20,39 @@ namespace GaiaMetrics.Controllers
         private GaiaMetricsDbContext _dbContext;
         private ICryptographyService _cryptographyService;
         private IConfiguration _configuration;
-        public UserController(GaiaMetricsDbContext dbContext, ICryptographyService cryptographyService, IConfiguration configuration)
+        private IJwtService _jwtService;
+        public UserController(GaiaMetricsDbContext dbContext, ICryptographyService cryptographyService, IConfiguration configuration, IJwtService jwtService)
         {
             _dbContext = dbContext;
             _cryptographyService = cryptographyService;
             _configuration = configuration;
+            _jwtService = jwtService;
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet]
+        public ActionResult<UserGetResponse> GetByJwtToken()
+        {
+            var user = _dbContext.Users.Where(x => x.Id == _jwtService.GetUserIdFromToken(User)).FirstOrDefault();
+
+            if (user == null)
+            {
+                return BadRequest(ErrorMessages.InvalidId);
+            }
+
+            var response = new UserGetResponse
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Username = user.Username,
+                SubscriptionPlanId = user.SubscriptionPlanId,
+                TimeUnitlSubscriptionExpires = user.SubscriptionExpiryTime - DateTime.UtcNow
+            };
+
+            return Ok(response);
+
         }
         [HttpPost]
         public IActionResult Register(UserRegisterRequest request)
@@ -106,34 +136,14 @@ namespace GaiaMetrics.Controllers
                 return BadRequest("Incorrect credentials.");
             }
 
-            var token = CreateJwtToken(user);
+            var token = _jwtService.CreateToken(user.Id, _configuration["Jwt:Key"], _configuration["Jwt:Issuer"], _configuration["Jwt:Audience"]);
+
             var response = new UserLoginResponse
             {
                 Token = token
             };
 
             return Ok(response);
-        }
-        private string CreateJwtToken(User user)
-        {
-            List<System.Security.Claims.Claim> identityClaims = new List<System.Security.Claims.Claim>()
-            {
-                new System.Security.Claims.Claim(ClaimTypes.Name, user.Id.ToString())
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
-
-            var token = new JwtSecurityToken(
-                claims: identityClaims,
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                expires: DateTime.UtcNow.AddDays(7),
-                signingCredentials: creds);
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-            return jwt;
         }
     }
 }

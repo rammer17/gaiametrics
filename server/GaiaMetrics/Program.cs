@@ -63,6 +63,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 //Set up service class to interface mappings, set up services for dependency injection
 builder.Services.AddScoped<ICryptographyService, CryptographyService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 var app = builder.Build();
 
