@@ -4,6 +4,7 @@ using GaiaMetrics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GaiaMetrics.Migrations
 {
     [DbContext(typeof(GaiaMetricsDbContext))]
-    partial class GaiaMetricsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231210104910_AddUserName")]
+    partial class AddUserName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,11 +58,13 @@ namespace GaiaMetrics.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<DateTime>("ExpiryTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -91,9 +95,6 @@ namespace GaiaMetrics.Migrations
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("SubscriptionExpiryTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("SubscriptionPlanId")
                         .HasColumnType("int");

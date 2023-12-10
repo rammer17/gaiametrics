@@ -1,13 +1,16 @@
-﻿namespace GaiaMetrics.Models.DB
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GaiaMetrics.Models.DB
 {
     public class SubscriptionPlan
     {
         public int Id { get; set; }
-        public string? Title { get; set; }
+        [Required]
+        public string Title { get; set; } = string.Empty;
+        [Required]
         public double Price { get; set; }
-        public DateTime ExpiryTime { get; set; }
 
-        //Required 1:M
+        //Required M:1
         public ICollection<User> Users { get; set; } = new List<User>();
     }
 }

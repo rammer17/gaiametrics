@@ -1,4 +1,5 @@
 using GaiaMetrics;
+using GaiaMetrics.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,9 @@ builder.Services.AddDbContext<GaiaMetricsDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection"));
 });
 
+
+//Set up service class to interface mappings, set up services for dependency injection
+builder.Services.AddScoped<ICryptographyService, CryptographyService>();
 
 var app = builder.Build();
 
