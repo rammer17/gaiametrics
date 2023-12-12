@@ -28,7 +28,6 @@ namespace GaiaMetrics.Controllers
             _configuration = configuration;
             _jwtService = jwtService;
         }
-
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         public ActionResult<UserGetResponse> GetByJwtToken()

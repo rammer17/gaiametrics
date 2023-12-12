@@ -2,6 +2,7 @@ using GaiaMetrics;
 using GaiaMetrics.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -59,6 +60,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    //Role policies and claims
+    options.AddPolicy("RoleGet", policy =>
+        policy.RequireClaim("RoleClaim", "RoleGetClaim"));
+    options.AddPolicy("RoleAdd", policy =>
+        policy.RequireClaim("RoleClaim", "RoleAddClaim"));
+    options.AddPolicy("RoleUpdate", policy =>
+        policy.RequireClaim("RoleClaim", "RoleUpdateClaim"));
+    options.AddPolicy("RoleDelete", policy =>
+        policy.RequireClaim("RoleClaim", "RoleDeleteClaim"));
 });
 
 //Set up service class to interface mappings, set up services for dependency injection
