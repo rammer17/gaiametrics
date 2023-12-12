@@ -104,13 +104,13 @@ namespace GaiaMetrics.Controllers
             //if the username is not correct return, there is no way to know which user attempted the login
             if (!_dbContext.Users.Any(x => EF.Functions.Collate(x.Username, "SQL_Latin1_General_CP1_CS_AS") == request.Username))
             {
-                return BadRequest("Incorrect username");
+                return BadRequest("Incorrect credentials.");
             }
 
             //check if the user with the username is locked, if locked return 
             if (_dbContext.Users.Where(x => EF.Functions.Collate(x.Username, "SQL_Latin1_General_CP1_CS_AS") == request.Username).First().DateLockedTo > DateTime.UtcNow)
             {
-                return BadRequest("Too many login attempts. Please try again later.");
+                return BadRequest("Incorrect credentials.");
             }
 
             //if a user with the given username already exists and is not locked out try to pull a user object with the password
