@@ -82,7 +82,7 @@ namespace GaiaMetrics.Controllers
             return Ok();
         }
         [HttpPut]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "RoleUpdate")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "RoleUpdate")]
         public ActionResult Update(RoleUpdateRequest request)
         {
             var roleToUpdate = _dbContext.Roles.Where(x => x.Id == request.CurrentId).FirstOrDefault();

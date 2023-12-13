@@ -135,11 +135,15 @@ namespace GaiaMetrics.Controllers
                 return BadRequest("Incorrect credentials.");
             }
 
-            //var token = _jwtService.CreateToken(user.Id, _configuration["Jwt:Key"], _configuration["Jwt:Issuer"], _configuration["Jwt:Audience"]);
-            //az sum miti
+            var claims = _dbContext.RoleClaims
+                .Where(x => x.RoleId == user.RoleId)
+                .Select(x => x.Claim.Name)
+                .Distinct().ToList();
+
+            var token = _jwtService.CreateToken(user.Id, user.Username, claims, _configuration["Jwt:Key"], _configuration["Jwt:Issuer"], _configuration["Jwt:Audience"]);
             var response = new UserLoginResponse
             {
-                //Token = token
+                Token = token
             };
 
             return Ok(response);

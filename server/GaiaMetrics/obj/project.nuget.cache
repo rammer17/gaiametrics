@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "075UPbopQw3wMZ/ywx1uiJGdw/RsOtCnuGJhA2C86q+XfZhviWKOdMQowGh9y6GsaajNvGkHLr8k785BkxHqPA==",
+  "dgSpecHash": "Dpmdq3tAaFV1pWUgN56ozpkGvnrbxyw0Tl3QjpzmFmSdoDUPP2cu7lDd2rsyaiACI5CXEbjtE+fg/SIz5xecaA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Student\\Desktop\\IT 2022_2023\\11v_9\\Georgi 11v\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj",
+  "projectFilePath": "D:\\daniel\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Student\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Student\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.25\\microsoft.aspnetcore.authentication.jwtbearer.6.0.25.nupkg.sha512",
