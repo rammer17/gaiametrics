@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Student\\Desktop\\IT 2022_2023\\11v_9\\Georgi 11v\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj": {}
+    "D:\\daniel\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Student\\Desktop\\IT 2022_2023\\11v_9\\Georgi 11v\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj": {
+    "D:\\daniel\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Student\\Desktop\\IT 2022_2023\\11v_9\\Georgi 11v\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj",
+        "projectUniqueName": "D:\\daniel\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj",
         "projectName": "GaiaMetrics",
-        "projectPath": "C:\\Users\\Student\\Desktop\\IT 2022_2023\\11v_9\\Georgi 11v\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj",
+        "projectPath": "D:\\daniel\\gaiametrics\\server\\GaiaMetrics\\GaiaMetrics.csproj",
         "packagesPath": "C:\\Users\\Student\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Student\\Desktop\\IT 2022_2023\\11v_9\\Georgi 11v\\gaiametrics\\server\\GaiaMetrics\\obj\\",
+        "outputPath": "D:\\daniel\\gaiametrics\\server\\GaiaMetrics\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -26,7 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

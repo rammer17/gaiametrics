@@ -20,7 +20,10 @@ namespace GaiaMetrics.Models.DB
         public int LoginAttemptCount { get; set; }
         public DateTime DateLockedTo { get; set; }
 
-
+        //Required 1:M
+        [Required]
+        public int RoleId { get; set; }
+        public Role Role { get; set; }
         //Optional 1:1
         public Contributor? Contributor { get; set; }
 
