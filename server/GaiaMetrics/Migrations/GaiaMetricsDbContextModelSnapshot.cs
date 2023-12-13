@@ -62,7 +62,7 @@ namespace GaiaMetrics.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("Contributors");
+                    b.ToTable("Contributors", (string)null);
                 });
 
             modelBuilder.Entity("GaiaMetrics.Models.DB.Role", b =>
@@ -114,7 +114,7 @@ namespace GaiaMetrics.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SubscriptionPlans");
+                    b.ToTable("SubscriptionPlans", (string)null);
                 });
 
             modelBuilder.Entity("GaiaMetrics.Models.DB.User", b =>
@@ -166,7 +166,7 @@ namespace GaiaMetrics.Migrations
 
                     b.HasIndex("SubscriptionPlanId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("GaiaMetrics.Models.DB.Contributor", b =>

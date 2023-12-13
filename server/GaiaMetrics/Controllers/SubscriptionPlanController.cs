@@ -62,7 +62,7 @@ namespace GaiaMetrics.Controllers
         {
             var subscriptionPlanToDelete = _dbContext.SubscriptionPlans.Where(x => x.Id == id).FirstOrDefault();
 
-            if(subscriptionPlanToDelete == null) 
+            if (subscriptionPlanToDelete == null)
             {
                 return BadRequest(ErrorMessages.InvalidId);
             }
