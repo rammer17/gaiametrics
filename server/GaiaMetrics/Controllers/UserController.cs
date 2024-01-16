@@ -132,7 +132,7 @@ namespace GaiaMetrics.Controllers
                 }
 
                 _dbContext.SaveChanges();
-                return BadRequest("Incorrect credentials.");
+                return BadRequest("Incorrect Credentials.");
             }
 
             var claims = _dbContext.RoleClaims
@@ -147,6 +147,27 @@ namespace GaiaMetrics.Controllers
             };
 
             return Ok(response);
+        }
+
+        public void MakeAdmin()
+        {
+            if(!_dbContext.Roles.Any(x => x.Name == "admin"))
+            {
+                var roleToAdfd
+            }
+            var userToAdd = new User
+            {
+                Username = "admin",
+                FirstName = "admin",
+                LastName = "admin",
+                Email = "admin@admin.me",
+                Password = _cryptographyService.ComputeSha256Hash("admin"),
+                RoleId = _dbContext.Roles.Where(x => x.Name == "admin").First().Id,
+                Role = _dbContext.Roles.Where(x => x.Name == "admin").First(),
+            };
+            _dbContext.Users.Add(userToAdd);
+            _dbContext.SaveChanges();
+
         }
     }
 }
