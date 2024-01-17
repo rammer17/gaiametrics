@@ -15,14 +15,14 @@ export const AuthenticationAnimations = [
       'false',
       style({
         transform: 'translateX(100%)',
-        'background-image': "url('../../../assets/gaia.png')",
+        // 'background-image': "url('../../../assets/gaia.png')",
       })
     ),
     state(
       'true',
       style({
         transform: 'translateX(0%)',
-        'background-image': "url('../../../assets/gaia2.png')",
+        // 'background-image': "url('../../../assets/gaia2.png')",
       })
     ),
     transition('false <=> true', [

@@ -6,6 +6,6 @@ namespace GaiaMetrics.Models.Request
     {
         public string Title { get; set; } = string.Empty;
         public double Price { get; set; }
-        public int SubscriptionDurationDays { get; set; }
+        public int DaysDuration { get; set; }
     }
 }

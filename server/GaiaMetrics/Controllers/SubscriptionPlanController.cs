@@ -27,11 +27,11 @@ namespace GaiaMetrics.Controllers
                     Id = x.Id,
                     Title = x.Title,
                     Price = x.Price,
-                    SubscriptionDurationDays = x.SubscriptionDuration.Days
+                    SubscriptionDurationDays = x.DaysDuration
                 });
             return Ok(subscriptionPlans);
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        /*[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]*/
         [HttpPost]
         public IActionResult Create(SubscriptionPlanCreateRequest request) 
         {
@@ -49,7 +49,7 @@ namespace GaiaMetrics.Controllers
             {
                 Title = request.Title,
                 Price = request.Price,
-                SubscriptionDuration = TimeSpan.FromDays(request.SubscriptionDurationDays)
+                DaysDuration = request.DaysDuration
             };
             _dbContext.SubscriptionPlans.Add(subscriptionPlanToAdd);
             _dbContext.SaveChanges();

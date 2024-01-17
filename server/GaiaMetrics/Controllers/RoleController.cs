@@ -35,8 +35,8 @@ namespace GaiaMetrics.Controllers
             return Ok(roles);
         }
         [HttpPost]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "RoleAdd")]
-        public ActionResult Add(RoleAddRequest request)
+/*        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "RoleAdd")]
+*/        public ActionResult Add(RoleAddRequest request)
         {
             if (_dbContext.Roles.Any(x => x.Name == request.Name))
             {

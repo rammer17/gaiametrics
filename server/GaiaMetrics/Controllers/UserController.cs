@@ -92,6 +92,8 @@ namespace GaiaMetrics.Controllers
                 Password = _cryptographyService.ComputeSha256Hash(request.Password),
                 SubscriptionPlan = freeSubscriptionPlan,
                 SubscriptionPlanId = freeSubscriptionPlan.Id,
+                Role = _dbContext.Roles.First(x => x.Id == 2),
+                RoleId = 2
             };
             _dbContext.Users.Add(userToAdd);
             _dbContext.SaveChanges();
@@ -149,13 +151,13 @@ namespace GaiaMetrics.Controllers
             return Ok(response);
         }
 
-        public void MakeAdmin()
-        {
-            if(!_dbContext.Roles.Any(x => x.Name == "admin"))
-            {
-                var roleToAdfd
-            }
-            var userToAdd = new User
+        /* public void MakeAdmin()
+                {
+                    if(!_dbContext.Roles.Any(x => x.Name == "admin"))
+                    {
+                        var roleToAdfd
+                    
+        var userToAdd = new User
             {
                 Username = "admin",
                 FirstName = "admin",
@@ -169,5 +171,6 @@ namespace GaiaMetrics.Controllers
             _dbContext.SaveChanges();
 
         }
+        }*/
     }
 }
