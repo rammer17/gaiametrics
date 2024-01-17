@@ -1,25 +1,25 @@
-export type UserCreateRequest = {
-    firstName: string;
-    lastName: string;
-    username: string;
-    email: string;
-    password: string;
+export type UserSignUpRequest = {
+  firstName: string;
+  lastName: string;
+  userName: string;
+  email: string;
+  password: string;
 };
 
-export type UserLoginRequest = {
-    username: string;
-    password: string;
+export type UserSignInRequest = {
+  userName: string;
+  password: string;
 };
 
 export type UserLoginResponse = {
-    token: string;
+  token: string;
 };
 
 export type UserGetResponse = {
   id: number;
   firstName: string;
   lastName: string;
-  username: string;
+  userName: string;
   email: string;
   subscriptionPlanId: number;
   timeUnitlSubscriptionExpires: {

@@ -1,0 +1,142 @@
+<div
+  class="authentication-container d-flex align-items-center justify-content-center w-100 h-100">
+  <div
+    class="box-shadow-wrapper d-flex align-items-center justify-content-center w-100 h-75 position-relative">
+    <div
+      [@bannerAnimation]="bannerAnimationState"
+      class="banner-container position-absolute w-50 h-100 p-5 d-flex flex-column justify-content-between align-items-start pe-none user-select-none">
+      <div class="d-flex align-items-center">
+        <img src="../../../assets/logo.png" style="width: 80px" />
+        <span class="fs-2 ms-3 text-light">Gaiametrics</span>
+      </div>
+      <!-- <h4 [@logo]="!bannerAnimationState" class="text-light">Gaiametrics2</h4> -->
+      <div class="position-relative w-100">
+        <div
+          [@quoteAnimation]="bannerAnimationState"
+          class="position-absolute bottom-0 px-4 w-100 text-light fw-bold fs-5 text-center">
+          “We still do not know one thousandth of one percent of what nature has
+          revealed to us.” – Albert Einstein
+        </div>
+        <div
+          [@quoteAnimation]="!bannerAnimationState"
+          class="position-absolute bottom-0 px-4 w-100 text-light fw-bold fs-5 text-center">
+          “The environment is in us, not outside of us. The trees are our lungs,
+          the rivers our bloodstream. We are all interconnected, and what you do
+          to the environment, ultimately, you do to yourself.” - Ian Somerhalder
+        </div>
+      </div>
+    </div>
+    <div
+      [@signInFormAnimation]="signInFormAnimationState"
+      class="form-container position-absolute container-border-radius-left w-50 h-100 d-flex flex-column justify-content-center align-items-center">
+      <form [formGroup]="signInForm!" (ngSubmit)="onSignIn()">
+        <h1 class="text-center text-dark">Welcome back!</h1>
+        <span class="text-medium text-center d-block">
+          Enter your credentials below to sign into your account
+        </span>
+
+        <app-form-field
+          [formControlName]="'userName'"
+          [type]="'text'"
+          [placeholder]="'Username'"
+          [icon]="'user-bounty-hunter'"></app-form-field>
+
+        <app-form-field
+          [formControlName]="'password'"
+          [type]="'password'"
+          [placeholder]="'Password'"
+          [icon]="'lock'"></app-form-field>
+
+        <is-button
+          [type]="'submit'"
+          [label]="'Sign in'"
+          [disabled]="signInForm?.invalid"
+          [styleClass]="['primary']"
+          [style]="{
+            'justify-content': 'center',
+            width: '100%',
+            'margin-top': '1rem'
+          }"></is-button>
+
+        <p class="text-center text-medium fs-6 p-0 mt-4">
+          By clicking continue, you agree to our
+          <span class="link fw-bold">Terms of Service</span>
+          and
+          <span class="link fw-bold">Privacy Policy.</span>
+        </p>
+      </form>
+      <!-- </div> -->
+      <div class="signup-wrapper text-center text-medium mt-4">
+        <span class="fs-6">
+          New to Gaiametrics?
+          <span class="link fw-bold" (click)="changeCurrentIndex()">
+            Sign up
+          </span>
+        </span>
+      </div>
+    </div>
+    <div
+      [@signUpFormAnimation]="signUpFormAnimationState"
+      class="form-container position-absolute w-50 h-100 d-flex flex-column justify-content-center align-items-center">
+      <form [formGroup]="signUpForm!" (ngSubmit)="onSignUp()">
+        <h1 class="text-center text-dark">Sign up</h1>
+
+        <app-form-field
+          [formControlName]="'firstName'"
+          [type]="'text'"
+          [placeholder]="'First Name'"
+          [icon]="'id-card'"></app-form-field>
+
+        <app-form-field
+          [formControlName]="'lastName'"
+          [type]="'text'"
+          [placeholder]="'Last Name'"
+          [icon]="'address-card'"></app-form-field>
+
+        <app-form-field
+          [formControlName]="'userName'"
+          [type]="'text'"
+          [placeholder]="'Username'"
+          [icon]="'user-bounty-hunter'"></app-form-field>
+
+        <app-form-field
+          [formControlName]="'password'"
+          [type]="'password'"
+          [placeholder]="'Password'"
+          [icon]="'lock'"></app-form-field>
+
+        <app-form-field
+          [formControlName]="'email'"
+          [type]="'email'"
+          [placeholder]="'Email'"
+          [icon]="'mailbox'"></app-form-field>
+
+        <is-button
+          [type]="'submit'"
+          [label]="'Sign up'"
+          [styleClass]="['primary']"
+          [disabled]="signUpForm?.invalid"
+          [style]="{
+            'justify-content': 'center',
+            width: '100%',
+            'margin-top': '1rem'
+          }"></is-button>
+
+        <p class="text-center text-medium fs-6 p-0 mt-4">
+          By clicking continue, you agree to our
+          <span class="link fw-bold">Terms of Service</span>
+          and
+          <span class="link fw-bold">Privacy Policy.</span>
+        </p>
+      </form>
+      <div class="signup-wrapper text-center text-medium mt-4">
+        <span class="fs-6">
+          Already have an account?
+          <span class="link fw-bold" (click)="changeCurrentIndex()">
+            Sign in
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
