@@ -132,17 +132,42 @@ namespace GaiaMetrics.Controllers
                 }
 
                 _dbContext.SaveChanges();
-                return BadRequest("Incorrect credentials.");
+                return BadRequest("Incorrect Credentials.");
             }
 
-            //var token = _jwtService.CreateToken(user.Id, _configuration["Jwt:Key"], _configuration["Jwt:Issuer"], _configuration["Jwt:Audience"]);
-            //az sum miti
+            var claims = _dbContext.RoleClaims
+                .Where(x => x.RoleId == user.RoleId)
+                .Select(x => x.Claim.Name)
+                .Distinct().ToList();
+
+            var token = _jwtService.CreateToken(user.Id, user.Username, claims, _configuration["Jwt:Key"], _configuration["Jwt:Issuer"], _configuration["Jwt:Audience"]);
             var response = new UserLoginResponse
             {
-                //Token = token
+                Token = token
             };
 
             return Ok(response);
+        }
+
+        public void MakeAdmin()
+        {
+            if(!_dbContext.Roles.Any(x => x.Name == "admin"))
+            {
+                var roleToAdfd
+            }
+            var userToAdd = new User
+            {
+                Username = "admin",
+                FirstName = "admin",
+                LastName = "admin",
+                Email = "admin@admin.me",
+                Password = _cryptographyService.ComputeSha256Hash("admin"),
+                RoleId = _dbContext.Roles.Where(x => x.Name == "admin").First().Id,
+                Role = _dbContext.Roles.Where(x => x.Name == "admin").First(),
+            };
+            _dbContext.Users.Add(userToAdd);
+            _dbContext.SaveChanges();
+
         }
     }
 }
