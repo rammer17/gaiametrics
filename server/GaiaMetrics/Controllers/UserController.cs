@@ -28,7 +28,6 @@ namespace GaiaMetrics.Controllers
             _configuration = configuration;
             _jwtService = jwtService;
         }
-
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         public ActionResult<UserGetResponse> GetByJwtToken()
@@ -93,6 +92,8 @@ namespace GaiaMetrics.Controllers
                 Password = _cryptographyService.ComputeSha256Hash(request.Password),
                 SubscriptionPlan = freeSubscriptionPlan,
                 SubscriptionPlanId = freeSubscriptionPlan.Id,
+                Role = _dbContext.Roles.First(x => x.Id == 2),
+                RoleId = 2
             };
             _dbContext.Users.Add(userToAdd);
             _dbContext.SaveChanges();
@@ -133,11 +134,15 @@ namespace GaiaMetrics.Controllers
                 }
 
                 _dbContext.SaveChanges();
-                return BadRequest("Incorrect credentials.");
+                return BadRequest("Incorrect Credentials.");
             }
 
-            var token = _jwtService.CreateToken(user.Id, _configuration["Jwt:Key"], _configuration["Jwt:Issuer"], _configuration["Jwt:Audience"]);
+            var claims = _dbContext.RoleClaims
+                .Where(x => x.RoleId == user.RoleId)
+                .Select(x => x.Claim.Name)
+                .Distinct().ToList();
 
+            var token = _jwtService.CreateToken(user.Id, user.Username, claims, _configuration["Jwt:Key"], _configuration["Jwt:Issuer"], _configuration["Jwt:Audience"]);
             var response = new UserLoginResponse
             {
                 Token = token
@@ -145,5 +150,27 @@ namespace GaiaMetrics.Controllers
 
             return Ok(response);
         }
+
+        /* public void MakeAdmin()
+                {
+                    if(!_dbContext.Roles.Any(x => x.Name == "admin"))
+                    {
+                        var roleToAdfd
+                    
+        var userToAdd = new User
+            {
+                Username = "admin",
+                FirstName = "admin",
+                LastName = "admin",
+                Email = "admin@admin.me",
+                Password = _cryptographyService.ComputeSha256Hash("admin"),
+                RoleId = _dbContext.Roles.Where(x => x.Name == "admin").First().Id,
+                Role = _dbContext.Roles.Where(x => x.Name == "admin").First(),
+            };
+            _dbContext.Users.Add(userToAdd);
+            _dbContext.SaveChanges();
+
+        }
+        }*/
     }
 }

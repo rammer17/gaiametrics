@@ -1,0 +1,19 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { UserSignInRequest, UserSignUpRequest } from '../models/user.model';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UserService {
+  private readonly http: HttpClient = inject(HttpClient);
+
+  signUp(body: UserSignUpRequest): Observable<any> {
+    return this.http.post<any>(`/api/User/Register`, body);
+  }
+
+  signIn(body: UserSignInRequest): Observable<any> {
+    return this.http.post<any>(`/api/User/Login`, body);
+  }
+}

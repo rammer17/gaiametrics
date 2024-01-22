@@ -1,4 +1,5 @@
 ﻿using GaiaMetrics.Models.DB;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -8,12 +9,21 @@ namespace GaiaMetrics.Services
 {
     public class JwtService : IJwtService
     {
-        public string CreateToken(int userId, string jwtKey, string jwtIssuer, string jwtAudience)
+        public string CreateToken(int userId, string roleName, List<string> roleClaims, string jwtKey, string jwtIssuer, string jwtAudience)
         {
             List<System.Security.Claims.Claim> identityClaims = new List<System.Security.Claims.Claim>()
             {
-                new System.Security.Claims.Claim(ClaimTypes.Name, userId.ToString())
+                new System.Security.Claims.Claim(ClaimTypes.Name, userId.ToString()),
+                new System.Security.Claims.Claim(ClaimTypes.Role, roleName)
             };
+
+            //User custom claims
+
+            foreach (var claim in roleClaims)
+            {
+                //Adding each custom claim in the token
+                identityClaims.Add(new System.Security.Claims.Claim("RoleClaim", claim.ToString()));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 

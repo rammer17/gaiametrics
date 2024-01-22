@@ -1,0 +1,33 @@
+.authentication-container {
+  padding: 0 24rem;
+  .box-shadow-wrapper {
+    -webkit-box-shadow: 10px 10px 27px -20px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 10px 10px 27px -20px rgba(0, 0, 0, 0.75);
+    box-shadow: 10px 10px 27px -20px rgba(0, 0, 0, 0.75);
+    background-color: var(--primary-medium);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    .banner-container {
+      background-color: var(--primary-darker);
+      // background-image: url('../../../assets/gaia.png');
+      // background-image: url('../../../assets/gaia2.png');
+      left: 0px;
+      z-index: 1000;
+    }
+    .form-container {
+      background-color: var(--primary-medium);
+      padding: 0 12rem;
+      right: 0px;
+      z-index: 998;
+    }
+  }
+}
+
+@media (max-width: 1400px) {
+  .banner-container {
+    display: none !important;
+  }
+  .form-container {
+    width: 100% !important;
+  }
+}
