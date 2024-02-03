@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  portal:
+    build:
+      context: ./ui/frontend/
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+  api:
+    build:
+      context: ./server/GaiaMetrics/
+      dockerfile: Dockerfile
+    ports:
+      - "5001:80"
+  mosquitto:
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto:/etc/mosquitto
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
