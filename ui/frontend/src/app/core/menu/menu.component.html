@@ -1,3 +1,28 @@
-<div class="menu-container w-100  h-100">
-asdads
+<div class="menu-container w-100 h-100 p-4">
+  <div
+    class="account-wrapper rounded p-3 d-flex align-items-center justify-content-between mb-5">
+    <div class="d-flex flex-column align-items-start justify-content-center">
+      <span class="account-name fw-bold">Rammer17</span>
+      <span class="account-plan text-medium">Free Plan</span>
+    </div>
+    <i
+      class="fa fa-duotone fa-ellipsis-vertical cursor-pointer"
+      [isPopover]="showAccountPopover"
+      (click)="showAccountPopover = !showAccountPopover"
+      [template]="accountPopoverTemplate"
+      [position]="'right'"></i>
+    <ng-template #accountPopoverTemplate>
+      <div class="bg-light">asdadsoihj</div>
+    </ng-template>
+  </div>
+
+  <ul class="menu-section-wrapper p-0 m-0">
+    <li
+      *ngFor="let item of menuList"
+      [routerLink]="['/map']"
+      class="d-flex align-items-center rounded cursor-pointer user-select-none px-3 py-2 my-2">
+      <i class="fa fa-duotone fa-{{ item.icon }}" class="me-3 fs-3"></i>
+      <span class="text-medium fw-bold fs-5">{{ item.label }}</span>
+    </li>
+  </ul>
 </div>

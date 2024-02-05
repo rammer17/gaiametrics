@@ -1,3 +1,23 @@
 .menu-container {
-  background-color: var(--primary-light);
+  background-color: var(--primary-medium);
+  .account-wrapper {
+    background-color: var(--primary-light);
+  }
+  .menu-section-wrapper {
+    li {
+      background-color: var(--primary-light);
+      list-style: none;
+      transition: 0.25s;
+      span {
+        transition: 0.25s;
+      }
+    }
+    li:hover {
+      background-color: var(--primary-dark);
+      color: var(--text-light) !important;
+      span {
+        color: var(--text-light) !important;
+      }
+    }
+  }
 }

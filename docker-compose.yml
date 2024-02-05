@@ -1,18 +1,18 @@
 version: "3.8"
 
 services:
-  portal:
-    build:
-      context: ./ui/frontend/
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-  api:
-    build:
-      context: ./server/GaiaMetrics/
-      dockerfile: Dockerfile
-    ports:
-      - "5001:80"
+  # portal:
+  #   build:
+  #     context: ./ui/frontend/
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "80:80"
+  # api:
+  #   build:
+  #     context: ./server/GaiaMetrics/
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5001:80"
   mosquitto:
     image: eclipse-mosquitto
     hostname: mosquitto

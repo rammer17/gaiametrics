@@ -16,6 +16,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserService } from '../services/user.service';
 import { FormFieldComponent } from '../../shared/ng-is-components/form-field.component';
 import { PopoverDirective } from '../../shared/ng-is-components/popover.directive';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-authentication',
@@ -37,6 +38,7 @@ export class AuthenticationComponent {
   private readonly fb: FormBuilder = inject(FormBuilder);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly userService: UserService = inject(UserService);
+  private readonly router: Router = inject(Router);
 
   // Form props
   signInForm?: FormGroup;
@@ -55,6 +57,8 @@ export class AuthenticationComponent {
     this.bannerAnimationState = !this.bannerAnimationState;
     this.signInFormAnimationState = !this.signInFormAnimationState;
     this.signUpFormAnimationState = !this.signUpFormAnimationState;
+    this.signInForm?.reset();
+    this.signUpForm?.reset();
   }
 
   onSignUp(): void {
@@ -70,6 +74,7 @@ export class AuthenticationComponent {
     const method: string = 'signUp';
     const nextHandler: (resp: any) => void = () => {
       console.log('SIGN UP SUCCESS');
+      this.changeCurrentIndex();
     };
 
     this.httpRequestHandler(method, body, nextHandler.bind(this));
@@ -83,8 +88,12 @@ export class AuthenticationComponent {
       password: this.signInForm.get('password')?.value,
     };
     const method: string = 'signIn';
-    const nextHandler: (resp: any) => void = () => {
+    const nextHandler: (resp: { token: string }) => void = (resp: {
+      token: string;
+    }) => {
       console.log('SIGN IN SUCCESS');
+      localStorage.setItem('token', resp.token);
+      this.router.navigate(['/home']);
     };
 
     this.httpRequestHandler(method, body, nextHandler.bind(this));

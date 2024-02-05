@@ -2,14 +2,12 @@
 using GaiaMetrics.Models.Request;
 using GaiaMetrics.Models.Response;
 using GaiaMetrics.Services;
+using GaiaMetrics.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using MQTTnet.Client;
 
 namespace GaiaMetrics.Controllers
 {
@@ -21,17 +19,21 @@ namespace GaiaMetrics.Controllers
         private ICryptographyService _cryptographyService;
         private IConfiguration _configuration;
         private IJwtService _jwtService;
-        public UserController(GaiaMetricsDbContext dbContext, ICryptographyService cryptographyService, IConfiguration configuration, IJwtService jwtService)
+        private readonly IMqttService _mqttService;
+        public UserController(GaiaMetricsDbContext dbContext, ICryptographyService cryptographyService, IConfiguration configuration, IJwtService jwtService, IMqttService mqttService)
         {
             _dbContext = dbContext;
             _cryptographyService = cryptographyService;
             _configuration = configuration;
             _jwtService = jwtService;
+            _mqttService = mqttService;
         }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
-        public ActionResult<UserGetResponse> GetByJwtToken()
-        {
+        public async Task<ActionResult<UserGetResponse>> GetByJwtToken()
+        { 
+            /*await _mqttService.SubscribeToTopicAsync("api");*/
+
             var user = _dbContext.Users.Where(x => x.Id == _jwtService.GetUserIdFromToken(User)).FirstOrDefault();
 
             if (user == null)
@@ -49,6 +51,7 @@ namespace GaiaMetrics.Controllers
                 SubscriptionPlanId = user.SubscriptionPlanId,
                 TimeUnitlSubscriptionExpires = user.SubscriptionExpiryTime - DateTime.UtcNow
             };
+
 
             return Ok(response);
 
@@ -92,15 +95,15 @@ namespace GaiaMetrics.Controllers
                 Password = _cryptographyService.ComputeSha256Hash(request.Password),
                 SubscriptionPlan = freeSubscriptionPlan,
                 SubscriptionPlanId = freeSubscriptionPlan.Id,
-                Role = _dbContext.Roles.First(x => x.Id == 2),
-                RoleId = 2
+                Role = _dbContext.Roles.First(x => x.Id == 1),
+                RoleId = 1
             };
             _dbContext.Users.Add(userToAdd);
             _dbContext.SaveChanges();
             return Ok();
         }
         [HttpPost]
-        public ActionResult<UserLoginResponse> Login(UserLoginRequest request)
+        public async Task<ActionResult<UserLoginResponse>> Login(UserLoginRequest request)
         {
             //if the username is not correct return, there is no way to know which user attempted the login
             if (!_dbContext.Users.Any(x => EF.Functions.Collate(x.Username, "SQL_Latin1_General_CP1_CS_AS") == request.Username))
@@ -147,6 +150,26 @@ namespace GaiaMetrics.Controllers
             {
                 Token = token
             };
+
+            //Map broker host settings
+            BrokerHostSettings brokerHostSettings = new BrokerHostSettings();
+            _configuration.GetSection(nameof(BrokerHostSettings)).Bind(brokerHostSettings);
+
+            //Map client settings
+            ClientSettings clientSettings = new ClientSettings();
+            _configuration.GetSection(nameof(ClientSettings)).Bind(clientSettings);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                // Create and connect MQTT client with JWT token as clientId
+                var mqttClientOptions = new MqttClientOptionsBuilder()
+                    .WithClientId(token)
+                    .WithTcpServer(brokerHostSettings.Host, brokerHostSettings.Port)
+                    .WithCredentials(clientSettings.UserName, clientSettings.Password)
+                    .Build();
+
+                await _mqttService.CreateAndConnectMqttClient(mqttClientOptions);
+            }
 
             return Ok(response);
         }
