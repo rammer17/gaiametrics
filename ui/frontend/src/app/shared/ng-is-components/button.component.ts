@@ -27,6 +27,7 @@ import { CommonModule } from '@angular/common';
           [pull]="iconPos"
           [style]="{ color: iconColor }"
           [icon]="['fas', icon]"></fa-icon> -->
+        <i class="fa fa-solid fa-{{ icon }} me-2"></i>
       </ng-container>
       <ng-container *ngIf="loading === true">
         <!-- <fa-icon
@@ -45,7 +46,7 @@ import { CommonModule } from '@angular/common';
   styles: [
     `
       .is-button {
-        padding: 0rem 1rem;
+        padding: 0.75rem 1.25rem;
         border-radius: 0.5rem;
         border: none;
         transition: 0.2s;

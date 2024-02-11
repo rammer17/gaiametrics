@@ -1,4 +1,5 @@
 using GaiaMetrics;
+using GaiaMetrics.Extensions;
 using GaiaMetrics.Services;
 using GaiaMetrics.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -64,18 +65,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
-builder.Services.AddAuthorization(options =>
-{
-    //Role policies and claims
-    options.AddPolicy("RoleGet", policy =>
-        policy.RequireClaim("RoleClaim", "RoleGetClaim"));
-    options.AddPolicy("RoleAdd", policy =>
-        policy.RequireClaim("RoleClaim", "RoleAddClaim"));
-    options.AddPolicy("RoleUpdate", policy =>
-        policy.RequireClaim("RoleClaim", "RoleUpdateClaim"));
-    options.AddPolicy("RoleDelete", policy =>
-        policy.RequireClaim("RoleClaim", "RoleDeleteClaim"));
-});
+//Set up authorization policies
+AutorizationPolicyExtension.AddAuthorization(builder.Services);
 
 ConfigurationManager configuration = builder.Configuration;
 
@@ -89,8 +80,7 @@ configuration.GetSection(nameof(ClientSettings)).Bind(clientSettings);
 
 
 //Set up service class to interface mappings, set up services for dependency injection
-builder.Services.AddScoped<ICryptographyService, CryptographyService>();
-builder.Services.AddScoped<IJwtService, JwtService>();
+ServiceCollectionExtension.AddServices(builder.Services);
 
 // Add services to the container.
 builder.Services.AddScoped(sp =>
@@ -103,14 +93,6 @@ builder.Services.AddScoped(sp =>
 
     return options;
 });
-
-builder.Services.AddScoped<IMqttClient>(sp =>
-{
-    var factory = new MqttFactory();
-    return factory.CreateMqttClient();
-});
-
-builder.Services.AddScoped<IMqttService, MqttService>();
 
 var app = builder.Build();
 

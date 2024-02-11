@@ -31,5 +31,8 @@ namespace GaiaMetrics.Models.DB
         public int SubscriptionPlanId { get; set; }
         public SubscriptionPlan SubscriptionPlan { get; set; } = null!;
 
+        //N:N relationship 
+        public ICollection<DeviceGroup> DeviceGroups { get; set; }
+
     }
 }

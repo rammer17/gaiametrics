@@ -1,13 +1,9 @@
-﻿using GaiaMetrics.Models.DB;
+﻿using GaiaMetrics.Interfaces;
 using GaiaMetrics.Models.Request;
 using GaiaMetrics.Models.Response;
-using GaiaMetrics.Services;
-using GaiaMetrics.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MQTTnet.Client;
 
 namespace GaiaMetrics.Controllers
 {
@@ -15,185 +11,40 @@ namespace GaiaMetrics.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private GaiaMetricsDbContext _dbContext;
-        private ICryptographyService _cryptographyService;
-        private IConfiguration _configuration;
-        private IJwtService _jwtService;
-        private readonly IMqttService _mqttService;
-        public UserController(GaiaMetricsDbContext dbContext, ICryptographyService cryptographyService, IConfiguration configuration, IJwtService jwtService, IMqttService mqttService)
+        private readonly IUserService _userService;
+        public UserController(IUserService userService)
         {
-            _dbContext = dbContext;
-            _cryptographyService = cryptographyService;
-            _configuration = configuration;
-            _jwtService = jwtService;
-            _mqttService = mqttService;
+            _userService = userService;
         }
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
-        public async Task<ActionResult<UserGetResponse>> GetByJwtToken()
-        { 
-            /*await _mqttService.SubscribeToTopicAsync("api");*/
-
-            var user = _dbContext.Users.Where(x => x.Id == _jwtService.GetUserIdFromToken(User)).FirstOrDefault();
-
-            if (user == null)
-            {
-                return BadRequest(ErrorMessages.InvalidId);
-            }
-
-            var response = new UserGetResponse
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Username = user.Username,
-                SubscriptionPlanId = user.SubscriptionPlanId,
-                TimeUnitlSubscriptionExpires = user.SubscriptionExpiryTime - DateTime.UtcNow
-            };
-
-
-            return Ok(response);
-
-        }
-        [HttpPost]
-        public IActionResult Register(UserRegisterRequest request)
+        public async Task<ActionResult<UserGetResponse>> Get()
         {
-            if (request.Username.Length > 30 || request.Username.Length < 3)
-            {
-                return BadRequest("A username can not be shorter that 3 symbols or longer than 30 symbols.");
-            }
-
-            if (_dbContext.Users.Any(x => x.Username == request.Username))
-            {
-                return BadRequest("Username already taken.");
-            }
-
-            if (request.Password.Length < 8)
-            {
-                return BadRequest("Password must be longer than 8 symbols.");
-            }
-
-            if (_dbContext.Users.Any(x => x.Email == request.Email))
-            {
-                return BadRequest("There is already a user registered with this email address.");
-            }
-
-            var freeSubscriptionPlan = _dbContext.SubscriptionPlans.Where(x => x.Title == "Free").FirstOrDefault();
-
-            if (freeSubscriptionPlan == null)
-            {
-                return BadRequest("Free subscription plan not found.");
-            }
-
-            User userToAdd = new User
-            {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Username = request.Username,
-                Email = request.Email,
-                Password = _cryptographyService.ComputeSha256Hash(request.Password),
-                SubscriptionPlan = freeSubscriptionPlan,
-                SubscriptionPlanId = freeSubscriptionPlan.Id,
-                Role = _dbContext.Roles.First(x => x.Id == 1),
-                RoleId = 1
-            };
-            _dbContext.Users.Add(userToAdd);
-            _dbContext.SaveChanges();
-            return Ok();
+            var result = await _userService.Get(User);
+            return Ok(result.Data);
         }
+
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "UserGetAll")]
+        public async Task<ActionResult<UserGetResponse>> GetAll()
+        {
+            var result = await _userService.GetAll();
+            return Ok(result.Data);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(UserRegisterRequest request)
+        {
+            var result = await _userService.Register(request);
+            return Ok(result);
+        }
+
         [HttpPost]
         public async Task<ActionResult<UserLoginResponse>> Login(UserLoginRequest request)
         {
-            //if the username is not correct return, there is no way to know which user attempted the login
-            if (!_dbContext.Users.Any(x => EF.Functions.Collate(x.Username, "SQL_Latin1_General_CP1_CS_AS") == request.Username))
-            {
-                return BadRequest("Incorrect credentials.");
-            }
-
-            //check if the user with the username is locked, if locked return 
-            if (_dbContext.Users.Where(x => EF.Functions.Collate(x.Username, "SQL_Latin1_General_CP1_CS_AS") == request.Username).First().DateLockedTo > DateTime.UtcNow)
-            {
-                return BadRequest("Incorrect credentials.");
-            }
-
-            //if a user with the given username already exists and is not locked out try to pull a user object with the password
-            var user = _dbContext.Users
-                .Where(x => EF.Functions.Collate(x.Username, "SQL_Latin1_General_CP1_CS_AS") == request.Username && x.Password == _cryptographyService.ComputeSha256Hash(request.Password))
-                .FirstOrDefault();
-
-            //if password is incorrect but username is correct increse login attempt count of the user by 1
-            if (user == null)
-            {
-                var userFailedLogin = _dbContext.Users
-                    .Where(x => EF.Functions.Collate(x.Username, "SQL_Latin1_General_CP1_CS_AS") == request.Username)
-                    .First();
-
-                userFailedLogin.LoginAttemptCount++;
-                if (userFailedLogin.LoginAttemptCount >= 5)
-                {
-                    userFailedLogin.DateLockedTo = DateTime.UtcNow.AddHours(2);
-                    userFailedLogin.LoginAttemptCount = 0;
-                }
-
-                _dbContext.SaveChanges();
-                return BadRequest("Incorrect Credentials.");
-            }
-
-            var claims = _dbContext.RoleClaims
-                .Where(x => x.RoleId == user.RoleId)
-                .Select(x => x.Claim.Name)
-                .Distinct().ToList();
-
-            var token = _jwtService.CreateToken(user.Id, user.Username, claims, _configuration["Jwt:Key"], _configuration["Jwt:Issuer"], _configuration["Jwt:Audience"]);
-            var response = new UserLoginResponse
-            {
-                Token = token
-            };
-
-            //Map broker host settings
-            BrokerHostSettings brokerHostSettings = new BrokerHostSettings();
-            _configuration.GetSection(nameof(BrokerHostSettings)).Bind(brokerHostSettings);
-
-            //Map client settings
-            ClientSettings clientSettings = new ClientSettings();
-            _configuration.GetSection(nameof(ClientSettings)).Bind(clientSettings);
-
-            if (!string.IsNullOrEmpty(token))
-            {
-                // Create and connect MQTT client with JWT token as clientId
-                var mqttClientOptions = new MqttClientOptionsBuilder()
-                    .WithClientId(token)
-                    .WithTcpServer(brokerHostSettings.Host, brokerHostSettings.Port)
-                    .WithCredentials(clientSettings.UserName, clientSettings.Password)
-                    .Build();
-
-                await _mqttService.CreateAndConnectMqttClient(mqttClientOptions);
-            }
-
-            return Ok(response);
+            var result = await _userService.Login(request);
+            return Ok(result.Data);
         }
-
-        /* public void MakeAdmin()
-                {
-                    if(!_dbContext.Roles.Any(x => x.Name == "admin"))
-                    {
-                        var roleToAdfd
-                    
-        var userToAdd = new User
-            {
-                Username = "admin",
-                FirstName = "admin",
-                LastName = "admin",
-                Email = "admin@admin.me",
-                Password = _cryptographyService.ComputeSha256Hash("admin"),
-                RoleId = _dbContext.Roles.Where(x => x.Name == "admin").First().Id,
-                Role = _dbContext.Roles.Where(x => x.Name == "admin").First(),
-            };
-            _dbContext.Users.Add(userToAdd);
-            _dbContext.SaveChanges();
-
-        }
-        }*/
     }
 }

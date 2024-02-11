@@ -16,6 +16,8 @@ export type UserLoginResponse = {
 };
 
 export type UserGetResponse = {
+  token?: string;
+
   id: number;
   firstName: string;
   lastName: string;

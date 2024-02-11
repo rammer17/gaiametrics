@@ -1,8 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { MenuComponent } from './core/menu/menu.component';
 import { AuthenticationComponent } from './core/authentication/authentication.component';
+import { ApplicationStateService } from './app-state.service';
+import { EMPTY, Observable, catchError, take } from 'rxjs';
+import { UserGetResponse } from './core/models/user.model';
+import { UserService } from './core/services/user.service';
 
 @Component({
   selector: 'app-root',
@@ -12,5 +16,28 @@ import { AuthenticationComponent } from './core/authentication/authentication.co
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'frontend';
+  private readonly appStateService: ApplicationStateService = inject(
+    ApplicationStateService
+  );
+  private readonly userService: UserService = inject(UserService);
+
+  user$?: Observable<UserGetResponse | null>;
+
+  ngOnInit(): void {
+    this.user$ = this.appStateService.user;
+    if (localStorage.getItem('token')) {
+      this.userService
+        .get()
+        .pipe(
+          catchError(() => {
+            localStorage.removeItem('token');
+            return EMPTY;
+          }),
+          take(1)
+        )
+        .subscribe((resp: UserGetResponse) =>
+          this.appStateService.updateUser(resp)
+        );
+    }
+  }
 }

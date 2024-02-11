@@ -1,7 +1,6 @@
-﻿using GaiaMetrics.Models.DB;
+﻿using GaiaMetrics.Interfaces;
 using GaiaMetrics.Models.Request;
 using GaiaMetrics.Models.Response;
-using GaiaMetrics.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,64 +11,34 @@ namespace GaiaMetrics.Controllers
     [ApiController]
     public class SubscriptionPlanController : ControllerBase
     {
-        private GaiaMetricsDbContext _dbContext;
-        public SubscriptionPlanController(GaiaMetricsDbContext dbContext)
+        private readonly ISubscriptionPlanService _subscriptionPlanService;
+        public SubscriptionPlanController(ISubscriptionPlanService subscriptionPlanService)
         {
-            _dbContext = dbContext;
+            _subscriptionPlanService = subscriptionPlanService;
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
         [HttpGet]
-        public ActionResult<List<SubscriptionPlanGetResponse>> GetAll()
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "SubscriptionPlanGet")]
+        public async Task<ActionResult<List<SubscriptionPlanGetResponse>>> GetAll()
         {
-            var subscriptionPlans = _dbContext.SubscriptionPlans
-                .Select(x => new SubscriptionPlanGetResponse()
-                {
-                    Id = x.Id,
-                    Title = x.Title,
-                    Price = x.Price,
-                    SubscriptionDurationDays = x.DaysDuration
-                });
-            return Ok(subscriptionPlans);
+            var result = await _subscriptionPlanService.GetAll();
+            return Ok(result.Data);
         }
-        /*[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]*/
+
         [HttpPost]
-        public IActionResult Create(SubscriptionPlanCreateRequest request) 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "SubscriptionPlanCreate")]
+        public async Task<IActionResult> Create(SubscriptionPlanCreateRequest request)
         {
-            if (_dbContext.SubscriptionPlans.Any(x => x.Title == request.Title)) 
-            {
-                return BadRequest("Subscription plan with the given title already exists.");
-            }
-
-            if (_dbContext.SubscriptionPlans.Any(x => x.Price < 0))
-            {
-                return BadRequest("Invalid price.");
-            }
-
-            var subscriptionPlanToAdd = new SubscriptionPlan
-            {
-                Title = request.Title,
-                Price = request.Price,
-                DaysDuration = request.DaysDuration
-            };
-            _dbContext.SubscriptionPlans.Add(subscriptionPlanToAdd);
-            _dbContext.SaveChanges();
-
-            return Ok();
+            var result = _subscriptionPlanService.Create(request);
+            return Ok(result);
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
         [HttpDelete]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "SubscriptionPlanDelete")]
         public IActionResult Delete(int id)
         {
-            var subscriptionPlanToDelete = _dbContext.SubscriptionPlans.Where(x => x.Id == id).FirstOrDefault();
-
-            if (subscriptionPlanToDelete == null)
-            {
-                return BadRequest(ErrorMessages.InvalidId);
-            }
-
-            _dbContext.SubscriptionPlans.Remove(subscriptionPlanToDelete);
-            _dbContext.SaveChanges();
-            return Ok();
+            var result = _subscriptionPlanService.Delete(id);
+            return Ok(result);
         }
     }
 }
