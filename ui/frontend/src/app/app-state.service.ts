@@ -18,7 +18,7 @@ export class ApplicationStateService {
 
   updateUser(data: UserGetResponse): void {
     this.user$.next(data);
-    this.router.navigateByUrl('/home');
+    // this.router.navigateByUrl('/home');
   }
 
   signOut(): void {

@@ -24,4 +24,8 @@ export class UserService {
   get(): Observable<UserGetResponse> {
     return this.http.get<UserGetResponse>(`/api/User/Get`);
   }
+
+  getAll(): Observable<UserGetResponse[]> {
+    return this.http.get<UserGetResponse[]>(`/api/User/GetAll`);
+  }
 }

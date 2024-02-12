@@ -29,7 +29,7 @@ export const routes: Routes = [
       import('./features/administration/administration.routes').then(
         (m) => m.ADMINISTRATION_ROUTES
       ),
-    canMatch: [administrationGuardFn],
+    // canMatch: [administrationGuardFn],
   },
   {
     path: '**',
