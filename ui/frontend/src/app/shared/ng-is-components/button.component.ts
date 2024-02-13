@@ -63,10 +63,10 @@ import { CommonModule } from '@angular/common';
         background-color: var(--primary-darker);
       }
       .is-button-primary:hover:not([disabled]) {
-        background-color: var(--primary-darker);
+        background-color: var(--primary-dark);
       }
       .is-button-primary:enabled:focus {
-        box-shadow: 0 0 0 2px var(--primary-darker);
+        box-shadow: 0 0 0 2px var(--primary-dark);
       }
 
       .is-button-secondary {

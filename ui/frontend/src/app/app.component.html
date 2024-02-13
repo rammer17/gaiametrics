@@ -6,4 +6,10 @@
   <div class="main p-5">
     <router-outlet></router-outlet>
   </div>
+
+  <ng-http-loader
+    [entryComponent]="spinnerComponent"
+    [opacity]="'1'"
+    [minDuration]="400"
+    [filteredHeaders]="['SkipLoader']"></ng-http-loader>
 </div>

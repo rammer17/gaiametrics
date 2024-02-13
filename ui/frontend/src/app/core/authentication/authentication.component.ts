@@ -115,6 +115,7 @@ export class AuthenticationComponent {
       )
       .subscribe((resp: UserGetResponse) => {
         this.appStateService.updateUser(resp);
+        this.router.navigateByUrl('/home');
       });
   }
 
