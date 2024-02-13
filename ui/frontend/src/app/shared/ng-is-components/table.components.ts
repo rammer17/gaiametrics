@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -6,8 +6,8 @@ import {
   Input,
   TemplateRef,
   inject,
-} from '@angular/core';
-import { PopoverDirective } from './popover.directive';
+} from "@angular/core";
+import { PopoverDirective } from "./popover.directive";
 import {
   Observable,
   BehaviorSubject,
@@ -25,31 +25,15 @@ import {
   tap,
   startWith,
   shareReplay,
-} from 'rxjs';
-import { FormsModule } from '@angular/forms';
+} from "rxjs";
+import { FormsModule } from "@angular/forms";
+import { ButtonComponent } from "./button.component";
 
 @Component({
-  selector: 'is-table',
+  selector: "is-table",
   standalone: true,
-  imports: [CommonModule, PopoverDirective, FormsModule],
+  imports: [CommonModule, PopoverDirective, FormsModule, ButtonComponent],
   template: `
-    <!-- <table>
-      <thead>
-        <tr>
-          <th>Company</th>
-          <th>Contact</th>
-          <th>Country</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Ernst Handel</td>
-          <td>Roland Mendel</td>
-          <td>Austria</td>
-        </tr>
-      </tbody>
-    </table> -->
-
     <div class="data-table-wrapper">
       <div class="rounded-table-border">
         <table>
@@ -85,7 +69,18 @@ import { FormsModule } from '@angular/forms';
                   </div>
                 </th>
               </ng-container>
-              <th></th>
+              <th>
+                <div
+                  class="toggle-wrapper"
+                  (click)="onTogglePopover('TOGGLE_COLUMN')"
+                  [isPopover]="showToggleColumns"
+                  [position]="'bottom-inline-right'"
+                  [appendTo]="'body'"
+                  [template]="toggleColumnsTemplate">
+                  <i class="fa fa-solid fa-sliders"></i>
+                  <span>{{ "View" }}</span>
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -160,6 +155,9 @@ import { FormsModule } from '@angular/forms';
     `
       div.data-table-wrapper {
         div.rounded-table-border {
+          -webkit-box-shadow: 7px 7px 49px 4px rgba(65, 72, 67, 0.15);
+          -moz-box-shadow: 7px 7px 49px 4px rgba(65, 72, 67, 0.15);
+          box-shadow: 7px 7px 49px 4px rgba(65, 72, 67, 0.15);
           border: 1px solid var(--border-color);
           border-radius: calc(0.5rem - 2px);
           overflow: hidden;
@@ -178,11 +176,12 @@ import { FormsModule } from '@angular/forms';
                   padding-left: 0;
                   transition-duration: 0.15s;
                   transition-property: background-color, color;
-                  fa-icon {
+                  i.fa {
                     margin-left: 0.25rem;
                   }
                 }
-                div.sort-wrapper {
+                div.sort-wrapper,
+                div.toggle-wrapper {
                   display: flex;
                   align-items: center;
                   margin-left: 0.25rem;
@@ -193,13 +192,10 @@ import { FormsModule } from '@angular/forms';
                   border-radius: calc(0.5rem - 2px);
                 }
                 div.sort-wrapper-hover:hover {
-                  background-color: var(--accent-dark);
+                  background-color: var(--primary-light);
                   color: var(--text-accent);
                   cursor: pointer;
                 }
-              }
-              tr:hover {
-                background-color: var(--text-accent);
               }
             }
             tbody {
@@ -209,7 +205,7 @@ import { FormsModule } from '@angular/forms';
                 border-top: 1px solid var(--border-color);
               }
               tr:hover {
-                background-color: var(--accent-dark);
+                background-color: var(--primary-light);
                 color: var(--text-accent);
               }
             }
@@ -218,12 +214,7 @@ import { FormsModule } from '@angular/forms';
               font-weight: 500;
               vertical-align: middle;
               text-align: left;
-              // padding-left: 1rem;
-              // padding-right: 1rem;
               height: 3rem;
-            }
-            th:has(> input[type='checkbox']) {
-              padding-right: 0;
             }
             td {
               vertical-align: middle;
@@ -231,13 +222,13 @@ import { FormsModule } from '@angular/forms';
             }
             td.action-trigger {
               text-align: center;
-              fa-icon {
+              i.fa {
                 transition-duration: 0.15s;
                 transition-property: background-color, color;
                 padding: 0.25rem 0.5rem;
                 border-radius: calc(0.5rem - 2px);
               }
-              fa-icon:hover {
+              i.fa:hover {
                 cursor: pointer;
                 background-color: var(--primary-dark);
               }
@@ -247,17 +238,12 @@ import { FormsModule } from '@angular/forms';
       }
       div.default-thead-sort-template,
       div.default-actions-template,
-      div.toggle-columns-container,
-      div.filter-options-container {
+      div.toggle-columns-container {
         background-color: var(--primary-medium);
         border-radius: calc(0.5rem - 2px);
         border: 1px solid var(--border-color);
         color: var(--text-medium);
         padding: 0.25rem;
-        font-family: '__Inter_0ec1f4', '__Inter_Fallback_0ec1f4', ui-sans-serif,
-          system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-          'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
-          'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
         user-select: none;
         margin-top: calc(0.5rem - 1px);
         div.sort-options,
@@ -272,16 +258,19 @@ import { FormsModule } from '@angular/forms';
         }
         div.sort-options:hover,
         div.table-columns:hover {
-          background-color: var(--accent-dark);
+          background-color: var(--primary-light);
           color: var(--text-accent);
           cursor: pointer;
+          i.fa {
+            color: var(--text-accent);
+          }
         }
         div.divider {
           height: 1px;
           background-color: var(--border-color);
           margin: 0.25rem 0;
         }
-        fa-icon {
+        i.fa {
           margin-right: 0.25rem;
           width: 14px;
           height: 14px;
@@ -290,43 +279,19 @@ import { FormsModule } from '@angular/forms';
         div.toggle-columns-label {
           font-weight: 600;
         }
-        div.search-bar {
-          input[type='checkbox'] {
-            display: inline-block;
-          }
-          div.no-results {
-            text-align: center;
-            padding: 0.75rem 1rem;
-          }
-        }
-        div.filter-options {
-          display: flex;
-          gap: 0.5rem;
-        }
       }
       div.default-header-template {
+        background-color: var(--primary-light);
         margin-bottom: 0.75rem;
         display: flex;
-        justify-content: space-between;
-        div.header-filters {
-          display: flex;
-          gap: 0.25rem;
-          div.filter-values {
-            display: inline-flex;
-            justify-content: space-around;
-            gap: 0.25rem;
-            // align-items: center;
-            div.vertical-divider {
-              margin-left: 0.25rem;
-              width: 1px;
-              background-color: var(--border-color);
-            }
-            div.active-filter-container {
-              padding: 0.125rem 0.25rem;
-              border-radius: calc(0.5rem - 4px);
-              background-color: var(--primary-dark);
-            }
-          }
+        justify-content: flex-end;
+        div.header-view {
+          background-color: var(--primary-medium);
+          border-radius: calc(0.5rem - 2px);
+          border: 1px solid var(--border-color);
+          color: var(--text-medium);
+          padding: 0.25rem;
+          user-select: none;
         }
       }
     `,
@@ -336,59 +301,59 @@ import { FormsModule } from '@angular/forms';
 export class IsTableComponent {
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
-  @Input('headerTemplate') headerTemplate?: TemplateRef<any>;
-  @Input('footerTemplate') footerTemplate?: TemplateRef<any>;
-  @Input('data') data: any[] = [
+  @Input("headerTemplate") headerTemplate?: TemplateRef<any>;
+  @Input("footerTemplate") footerTemplate?: TemplateRef<any>;
+  @Input("data") data: any[] = [
     {
-      task: 'TASK-8782',
+      task: "TASK-8782",
       title:
-        'Try to calculate the EXE feed, maybe it will index the multi-byte pixel!',
-      status: 'B',
+        "Try to calculate the EXE feed, maybe it will index the multi-byte pixel!",
+      status: "B",
     },
     {
-      task: 'TASK-7878',
-      title: 'We need to bypass the neural TCP card!',
-      status: 'A',
+      task: "TASK-7878",
+      title: "We need to bypass the neural TCP card!",
+      status: "A",
     },
     {
-      task: 'TASK-8686',
-      title:
-        "I'll parse the wireless SSL protocol, that should driver the API panel!",
-      status: 'B',
-    },
-    {
-      task: 'TASK-8782',
-      title:
-        'Try to calculate the EXE feed, maybe it will index the multi-byte pixel!',
-      status: 'C',
-    },
-    {
-      task: 'TASK-7878',
-      title: 'We need to bypass the neural TCP card!',
-      status: 'A',
-    },
-    {
-      task: 'TASK-8686',
+      task: "TASK-8686",
       title:
         "I'll parse the wireless SSL protocol, that should driver the API panel!",
-      status: 'D',
+      status: "B",
     },
     {
-      task: 'TASK-8782',
+      task: "TASK-8782",
       title:
-        'Try to calculate the EXE feed, maybe it will index the multi-byte pixel!',
-      status: 'B',
+        "Try to calculate the EXE feed, maybe it will index the multi-byte pixel!",
+      status: "C",
     },
     {
-      task: 'TASK-7878',
-      title: 'We need to bypass the neural TCP card!',
-      status: 'AB',
+      task: "TASK-7878",
+      title: "We need to bypass the neural TCP card!",
+      status: "A",
     },
     {
-      task: 'TASK-8686',
+      task: "TASK-8686",
       title:
         "I'll parse the wireless SSL protocol, that should driver the API panel!",
-      status: 'Y',
+      status: "D",
+    },
+    {
+      task: "TASK-8782",
+      title:
+        "Try to calculate the EXE feed, maybe it will index the multi-byte pixel!",
+      status: "B",
+    },
+    {
+      task: "TASK-7878",
+      title: "We need to bypass the neural TCP card!",
+      status: "AB",
+    },
+    {
+      task: "TASK-8686",
+      title:
+        "I'll parse the wireless SSL protocol, that should driver the API panel!",
+      status: "Y",
     },
   ];
 
@@ -397,7 +362,7 @@ export class IsTableComponent {
   sortAction$: BehaviorSubject<null> = new BehaviorSubject<null>(null);
   filterAction$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   availableFilters$?: Observable<any>;
-  refetchFilters$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  refetchFilters$: BehaviorSubject<string> = new BehaviorSubject<string>("");
 
   ngOnInit(): void {
     // Transform field names to title case
@@ -416,10 +381,10 @@ export class IsTableComponent {
           this.data.sort((a, b) => {
             return a[this.fields[this.sortIndex].name.toLowerCase()] <
               b[this.fields[this.sortIndex].name.toLowerCase()]
-              ? this.sortOrder === 'ASC'
+              ? this.sortOrder === "ASC"
                 ? -1
                 : 1
-              : this.sortOrder === 'ASC'
+              : this.sortOrder === "ASC"
               ? 1
               : -1;
           });
@@ -438,7 +403,7 @@ export class IsTableComponent {
     );
   }
 
-  sortOrder?: 'ASC' | 'DESC';
+  sortOrder?: "ASC" | "DESC";
   tempSortIndex: number = -1;
   sortIndex: number = -1;
   actionIndex: number = -1;
@@ -451,18 +416,18 @@ export class IsTableComponent {
 
   filters: any[] = [
     {
-      name: 'Status',
-      type: 'status',
+      name: "Status",
+      type: "status",
     },
     {
-      name: 'Task',
-      type: 'task',
+      name: "Task",
+      type: "task",
     },
   ];
 
   onTogglePopover(type: PopoverType, index?: number, filterType?: any): void {
     switch (type) {
-      case 'SORT':
+      case "SORT":
         // Toggle sort popover
         this.showTableHeadSorting =
           this.tempSortIndex !== index ? true : !this.showTableHeadSorting;
@@ -474,7 +439,7 @@ export class IsTableComponent {
         this.showFilter = false;
         this.filterIndex = -1;
         break;
-      case 'ACTION':
+      case "ACTION":
         // Toggle actions popover
         this.showActions =
           this.actionIndex !== index ? true : !this.showActions;
@@ -486,7 +451,7 @@ export class IsTableComponent {
         this.showFilter = false;
         this.filterIndex = -1;
         break;
-      case 'TOGGLE_COLUMN':
+      case "TOGGLE_COLUMN":
         // Toggle columns popover
         this.showToggleColumns = !this.showToggleColumns;
         // Close all other popovers
@@ -497,7 +462,7 @@ export class IsTableComponent {
         this.showFilter = false;
         this.filterIndex = -1;
         break;
-      case 'FILTER':
+      case "FILTER":
         // Toggle columns popover
         this.showFilter = this.filterIndex !== index ? true : !this.showFilter;
         this.filterIndex = index!;
@@ -509,7 +474,7 @@ export class IsTableComponent {
         this.showToggleColumns = false;
 
         //Reset input value
-        this.refetchFilters$.next('');
+        this.refetchFilters$.next("");
 
         // Get all available distinct values for filtering based on the input data
         this.availableFilter$ = combineLatest([
@@ -539,7 +504,7 @@ export class IsTableComponent {
     }
   }
 
-  onSortTableRows(order: 'ASC' | 'DESC'): void {
+  onSortTableRows(order: "ASC" | "DESC"): void {
     this.sortOrder = order;
     this.sortIndex = this.tempSortIndex;
     this.sortAction$.next(null);
@@ -636,4 +601,4 @@ export class IsTableComponent {
   }
 }
 
-export type PopoverType = 'SORT' | 'ACTION' | 'TOGGLE_COLUMN' | 'FILTER';
+export type PopoverType = "SORT" | "ACTION" | "TOGGLE_COLUMN" | "FILTER";
