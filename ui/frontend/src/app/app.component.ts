@@ -1,17 +1,17 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
-import { MenuComponent } from './core/menu/menu.component';
-import { AuthenticationComponent } from './core/authentication/authentication.component';
-import { ApplicationStateService } from './app-state.service';
-import { EMPTY, Observable, catchError, take } from 'rxjs';
-import { UserGetResponse } from './core/models/user.model';
-import { UserService } from './core/services/user.service';
-import { NgHttpLoaderComponent, NgHttpLoaderModule } from 'ng-http-loader';
-import { SpinnerComponent } from './spinner.component';
+import { Component, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router, RouterOutlet } from "@angular/router";
+import { MenuComponent } from "./core/menu/menu.component";
+import { AuthenticationComponent } from "./core/authentication/authentication.component";
+import { ApplicationStateService } from "./app-state.service";
+import { EMPTY, Observable, catchError, take } from "rxjs";
+import { UserGetResponse } from "./core/models/user.model";
+import { UserService } from "./core/services/user.service";
+import { NgHttpLoaderModule } from "ng-http-loader";
+import { SpinnerComponent } from "./spinner.component";
 
 @Component({
-  selector: 'app-root',
+  selector: "app-root",
   standalone: true,
   imports: [
     CommonModule,
@@ -20,14 +20,15 @@ import { SpinnerComponent } from './spinner.component';
     AuthenticationComponent,
     NgHttpLoaderModule,
   ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  templateUrl: "./app.component.html",
+  styleUrl: "./app.component.scss",
 })
 export class AppComponent {
   private readonly appStateService: ApplicationStateService = inject(
     ApplicationStateService
   );
   private readonly userService: UserService = inject(UserService);
+  private readonly router: Router = inject(Router);
 
   public spinnerComponent = SpinnerComponent;
 
@@ -35,12 +36,12 @@ export class AppComponent {
 
   ngOnInit(): void {
     this.user$ = this.appStateService.user;
-    if (localStorage.getItem('token')) {
+    if (localStorage.getItem("token")) {
       this.userService
         .get()
         .pipe(
           catchError(() => {
-            localStorage.removeItem('token');
+            localStorage.removeItem("token");
             return EMPTY;
           }),
           take(1)
@@ -48,6 +49,8 @@ export class AppComponent {
         .subscribe((resp: UserGetResponse) =>
           this.appStateService.updateUser(resp)
         );
+    } else {
+      this.router.navigateByUrl("/auth");
     }
   }
 }

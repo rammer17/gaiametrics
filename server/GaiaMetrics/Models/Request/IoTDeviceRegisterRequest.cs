@@ -2,9 +2,9 @@
 {
     public class IoTDeviceRegisterRequest
     {
-        public string Name { get; set; }
-        public double Latitude { get; set; }
-        public double Longtitude { get; set; }
-        public int DeviceGroupId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public double Latitude { get; set; } = 0;
+        public double Longtitude { get; set; } = 0;
+        public int DeviceGroupId { get; set; } = 0;
     }
 }

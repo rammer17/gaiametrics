@@ -38,7 +38,7 @@ import { FormErrorComponent } from './form-error.component';
           *ngIf="inputIcon"
           [style]="{ color: iconColor }"
           [ngClass]="iconClass()"
-          class="fa fa-duotone fa-{{ inputIcon }} fa-{{ iconSize }}"></i>
+          class="fa fa-solid fa-{{ inputIcon }} fa-{{ iconSize }}"></i>
       </div>
       <app-form-error
         [controlGroup]="hostFormGroup!.control!.controls"

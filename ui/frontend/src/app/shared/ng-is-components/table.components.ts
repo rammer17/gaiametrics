@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -6,13 +6,13 @@ import {
   Input,
   TemplateRef,
   inject,
-} from '@angular/core';
-import { PopoverDirective } from './popover.directive';
-import { Observable, BehaviorSubject, switchMap, of } from 'rxjs';
-import { FormsModule } from '@angular/forms';
-import { ButtonComponent } from './button.component';
+} from "@angular/core";
+import { PopoverDirective } from "./popover.directive";
+import { Observable, BehaviorSubject, switchMap, of } from "rxjs";
+import { FormsModule } from "@angular/forms";
+import { ButtonComponent } from "./button.component";
 @Component({
-  selector: 'is-table',
+  selector: "is-table",
   standalone: true,
   imports: [CommonModule, PopoverDirective, FormsModule, ButtonComponent],
   template: `
@@ -288,8 +288,8 @@ import { ButtonComponent } from './button.component';
 export class IsTableComponent {
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
-  @Input('headerTemplate') headerTemplate?: TemplateRef<any>;
-  @Input('data') data: any[] = [];
+  @Input("headerTemplate") headerTemplate?: TemplateRef<any>;
+  @Input("data") data: any[] = [];
 
   fields: any;
   data$?: Observable<any>;
@@ -305,17 +305,24 @@ export class IsTableComponent {
         sort: true,
       };
     });
+    this.initDataObs();
+  }
 
+  ngOnChanges() {
+    this.initDataObs();
+  }
+
+  private initDataObs(): void {
     this.data$ = this.sortAction$.pipe(
       switchMap(() => {
         if (this.sortIndex !== -1) {
           this.data.sort((a, b) => {
             return a[this.fields[this.sortIndex].name.toLowerCase()] <
               b[this.fields[this.sortIndex].name.toLowerCase()]
-              ? this.sortOrder === 'ASC'
+              ? this.sortOrder === "ASC"
                 ? -1
                 : 1
-              : this.sortOrder === 'ASC'
+              : this.sortOrder === "ASC"
               ? 1
               : -1;
           });
@@ -325,31 +332,18 @@ export class IsTableComponent {
     );
   }
 
-  sortOrder?: 'ASC' | 'DESC';
+  sortOrder?: "ASC" | "DESC";
   tempSortIndex: number = -1;
   sortIndex: number = -1;
   actionIndex: number = -1;
-  filterIndex: number = -1;
 
   showActions: boolean = false;
   showTableHeadSorting: boolean = false;
   showToggleColumns: boolean = false;
-  showFilter: boolean = false;
-
-  filters: any[] = [
-    {
-      name: 'Status',
-      type: 'status',
-    },
-    {
-      name: 'Task',
-      type: 'task',
-    },
-  ];
 
   onTogglePopover(type: PopoverType, index?: number): void {
     switch (type) {
-      case 'SORT':
+      case "SORT":
         // Toggle sort popover
         this.showTableHeadSorting =
           this.tempSortIndex !== index ? true : !this.showTableHeadSorting;
@@ -359,7 +353,7 @@ export class IsTableComponent {
         this.actionIndex = -1;
         this.showToggleColumns = false;
         break;
-      case 'ACTION':
+      case "ACTION":
         // Toggle actions popover
         this.showActions =
           this.actionIndex !== index ? true : !this.showActions;
@@ -369,7 +363,7 @@ export class IsTableComponent {
         this.tempSortIndex = -1;
         this.showToggleColumns = false;
         break;
-      case 'TOGGLE_COLUMN':
+      case "TOGGLE_COLUMN":
         // Toggle columns popover
         this.showToggleColumns = !this.showToggleColumns;
         // Close all other popovers
@@ -383,7 +377,7 @@ export class IsTableComponent {
     }
   }
 
-  onSortTableRows(order: 'ASC' | 'DESC'): void {
+  onSortTableRows(order: "ASC" | "DESC"): void {
     this.sortOrder = order;
     this.sortIndex = this.tempSortIndex;
     this.sortAction$.next(null);
@@ -400,4 +394,4 @@ export class IsTableComponent {
   }
 }
 
-export type PopoverType = 'SORT' | 'ACTION' | 'TOGGLE_COLUMN';
+export type PopoverType = "SORT" | "ACTION" | "TOGGLE_COLUMN";

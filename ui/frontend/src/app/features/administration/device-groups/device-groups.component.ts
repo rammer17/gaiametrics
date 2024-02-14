@@ -1,13 +1,13 @@
-import { Component, inject } from '@angular/core';
-import { DeviceGroupService } from '../../../core/services/device.group.service';
-import { DeviceGroupGetResponse } from '../../../core/models/device-group.model';
-import { DeviceGroupsAddComponent } from './device-groups-add/device-groups-add.component';
-import { CommonModule } from '@angular/common';
-import { ButtonComponent } from '../../../shared/ng-is-components/button.component';
-import { IsTableComponent } from '../../../shared/ng-is-components/table.components';
+import { Component, inject } from "@angular/core";
+import { DeviceGroupService } from "../../../core/services/device.group.service";
+import { DeviceGroupGetResponse } from "../../../core/models/device-group.model";
+import { DeviceGroupsAddComponent } from "./device-groups-add/device-groups-add.component";
+import { CommonModule } from "@angular/common";
+import { ButtonComponent } from "../../../shared/ng-is-components/button.component";
+import { IsTableComponent } from "../../../shared/ng-is-components/table.components";
 
 @Component({
-  selector: 'app-device-groups',
+  selector: "app-device-groups",
   standalone: true,
   imports: [
     CommonModule,
@@ -45,7 +45,9 @@ import { IsTableComponent } from '../../../shared/ng-is-components/table.compone
             <is-table [data]="deviceGroups"></is-table>
             <app-device-groups-add
               *ngIf="showAddModal"
-              (close)="showAddModal = false"></app-device-groups-add>
+              (close)="
+                showAddModal = false; fetchDeviceGroups()
+              "></app-device-groups-add>
           </ng-container>
         </div>
       </div>
@@ -60,6 +62,9 @@ export class DeviceGroupsComponent {
   showAddModal: boolean = false;
 
   ngOnInit(): void {
+    this.fetchDeviceGroups();
+  }
+  fetchDeviceGroups(): void {
     this.deviceGroupService
       .getAll()
       .subscribe((resp: any) => (this.deviceGroups = resp));

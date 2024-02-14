@@ -1,4 +1,4 @@
-import { CommonModule, NgTemplateOutlet } from '@angular/common';
+import { CommonModule, NgTemplateOutlet } from "@angular/common";
 import {
   ApplicationRef,
   ChangeDetectionStrategy,
@@ -14,7 +14,7 @@ import {
   Renderer2,
   TemplateRef,
   inject,
-} from '@angular/core';
+} from "@angular/core";
 import {
   Observable,
   ReplaySubject,
@@ -22,17 +22,17 @@ import {
   merge,
   takeUntil,
   throttleTime,
-} from 'rxjs';
+} from "rxjs";
 import {
   trigger,
   style,
   transition,
   animate,
   state,
-} from '@angular/animations';
+} from "@angular/animations";
 
 @Directive({
-  selector: '[isPopover]',
+  selector: "[isPopover]",
   standalone: true,
 })
 export class PopoverDirective {
@@ -47,20 +47,20 @@ export class PopoverDirective {
   @Input() popupNgTemplate?: TemplateRef<any>;
   @Input() data: any;
 
-  @Input('appendTo') target: 'body' | undefined;
-  @Input('isPopover') showPopover: boolean = true;
-  @Input('template') popoverTemplate?: any;
-  @Input('templateContext') popoverTemplateContext?: any;
-  @Input('position') position:
-    | 'left'
-    | 'right'
-    | 'top'
-    | 'bottom'
-    | 'top-inline-left'
-    | 'top-inline-right'
-    | 'bottom-inline-left'
-    | 'bottom-inline-right' = 'top';
-  @Input('animationDuration') animationDuration: number = 150;
+  @Input("appendTo") target: "body" | undefined;
+  @Input("isPopover") showPopover: boolean = true;
+  @Input("template") popoverTemplate?: any;
+  @Input("templateContext") popoverTemplateContext?: any;
+  @Input("position") position:
+    | "left"
+    | "right"
+    | "top"
+    | "bottom"
+    | "top-inline-left"
+    | "top-inline-right"
+    | "bottom-inline-left"
+    | "bottom-inline-right" = "top";
+  @Input("animationDuration") animationDuration: number = 150;
 
   private _popoverComponentRef?: ComponentRef<PopoverComponent>;
 
@@ -79,30 +79,30 @@ export class PopoverDirective {
   }
 
   private initPopover(): void {
-    let translateDir: 'X' | 'Y';
-    let translateVal: '' | '-';
+    let translateDir: "X" | "Y";
+    let translateVal: "" | "-";
 
     //Set direction from which the popover appears depending on its position
     switch (this.position) {
-      case 'top':
-      case 'top-inline-left':
-      case 'top-inline-right':
-        translateDir = 'Y';
-        translateVal = '';
+      case "top":
+      case "top-inline-left":
+      case "top-inline-right":
+        translateDir = "Y";
+        translateVal = "";
         break;
-      case 'bottom':
-      case 'bottom-inline-left':
-      case 'bottom-inline-right':
-        translateDir = 'Y';
-        translateVal = '-';
+      case "bottom":
+      case "bottom-inline-left":
+      case "bottom-inline-right":
+        translateDir = "Y";
+        translateVal = "-";
         break;
-      case 'left':
-        translateDir = 'X';
-        translateVal = '';
+      case "left":
+        translateDir = "X";
+        translateVal = "";
         break;
-      case 'right':
-        translateDir = 'X';
-        translateVal = '-';
+      case "right":
+        translateDir = "X";
+        translateVal = "-";
         break;
       default:
         break;
@@ -127,8 +127,8 @@ export class PopoverDirective {
 
   private initResizeObs() {
     this.resize$ = merge(
-      fromEvent(window, 'resize', { capture: true }),
-      fromEvent(window, 'scroll', { capture: true }).pipe(throttleTime(15))
+      fromEvent(window, "resize", { capture: true }),
+      fromEvent(window, "scroll", { capture: true }).pipe(throttleTime(15))
     );
   }
 
@@ -138,7 +138,7 @@ export class PopoverDirective {
     const componentRef = componentFactory.create(this.injector);
     const componentRootNode = this.getComponentRootNode(componentRef);
     const location =
-      this.target === 'body' ? document.body : this.getLocationViewContainer();
+      this.target === "body" ? document.body : this.getLocationViewContainer();
 
     this.projectComponentVariables(componentRef, options);
 
@@ -183,7 +183,7 @@ export class PopoverDirective {
 }
 
 @Component({
-  selector: 'is-popover',
+  selector: "is-popover",
   template: `
     <ng-container
       *ngTemplateOutlet="
@@ -201,6 +201,7 @@ export class PopoverDirective {
         line-break: strict;
         min-width: 100px;
         max-width: 400px;
+        width: 100%;
         overflow: hidden;
         z-index: 10000;
       }
@@ -210,21 +211,21 @@ export class PopoverDirective {
   imports: [NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
-    trigger('defaultAnimation', [
-      state('void, false', style({ transform: 'scale(0)' })),
-      transition('* => true', [
+    trigger("defaultAnimation", [
+      state("void, false", style({ transform: "scale(0)" })),
+      transition("* => true", [
         style({
           opacity: 0,
-          transform: 'translate{{ td }}({{ tv }}30%) scale(0.5)',
+          transform: "translate{{ td }}({{ tv }}30%) scale(0.5)",
         }),
         animate(
-          '{{ ad }}ms',
-          style({ opacity: 1, transform: 'translate{{ td }}(0) scale(1)' })
+          "{{ ad }}ms",
+          style({ opacity: 1, transform: "translate{{ td }}(0) scale(1)" })
         ),
       ]),
-      transition('* => false', [
-        style({ opacity: 1, transform: 'scale(1)' }),
-        animate('{{ ad }}ms', style({ opacity: 0, transform: 'scale(0.95)' })),
+      transition("* => false", [
+        style({ opacity: 1, transform: "scale(1)" }),
+        animate("{{ ad }}ms", style({ opacity: 0, transform: "scale(0.95)" })),
       ]),
     ]),
   ],
@@ -238,23 +239,23 @@ class PopoverComponent {
   template!: TemplateRef<any>;
   context?: object;
   position:
-    | 'left'
-    | 'right'
-    | 'top'
-    | 'bottom'
-    | 'top-inline-left'
-    | 'top-inline-right'
-    | 'bottom-inline-left'
-    | 'bottom-inline-right' = 'top';
+    | "left"
+    | "right"
+    | "top"
+    | "bottom"
+    | "top-inline-left"
+    | "top-inline-right"
+    | "bottom-inline-left"
+    | "bottom-inline-right" = "top";
   target!: HTMLElement;
 
   showLeaveAnimation: boolean = true;
-  translateDirection: 'X' | 'Y' = 'Y';
-  translateValue: '-' | '' = '';
+  translateDirection: "X" | "Y" = "Y";
+  translateValue: "-" | "" = "";
   animationDuration?: number;
 
   // Bind animation to host element
-  @HostBinding('@defaultAnimation') get getToggleDrawer(): any {
+  @HostBinding("@defaultAnimation") get getToggleDrawer(): any {
     return {
       value: this.showLeaveAnimation,
       params: {
@@ -286,42 +287,42 @@ class PopoverComponent {
     let y = 0;
 
     switch (this.position) {
-      case 'top':
+      case "top":
         x = (targetRect.right + targetRect.left) / 2 - popoverRect.width / 2;
         y = targetRect.top - popoverRect.height;
         break;
 
-      case 'bottom':
+      case "bottom":
         x = (targetRect.right + targetRect.left) / 2 - popoverRect.width / 2;
         y = targetRect.bottom;
         break;
 
-      case 'left':
+      case "left":
         x = targetRect.left - popoverRect.width;
         y = targetRect.top + targetRect.height / 2 - popoverRect.height / 2;
         break;
 
-      case 'right':
+      case "right":
         x = targetRect.left + targetRect.width;
         y = targetRect.top + targetRect.height / 2 - popoverRect.height / 2;
         break;
 
-      case 'bottom-inline-left':
+      case "bottom-inline-left":
         x = targetRect.left;
         y = targetRect.bottom;
         break;
 
-      case 'bottom-inline-right':
+      case "bottom-inline-right":
         x = targetRect.right - popoverRect.width;
         y = targetRect.bottom;
         break;
 
-      case 'top-inline-left':
+      case "top-inline-left":
         x = targetRect.left;
         y = targetRect.top - popoverRect.height;
         break;
 
-      case 'top-inline-right':
+      case "top-inline-right":
         x = targetRect.right - popoverRect.width;
         y = targetRect.top - popoverRect.height;
         break;
@@ -330,15 +331,15 @@ class PopoverComponent {
         return;
     }
 
-    this.renderer.setStyle(this.host.nativeElement, 'top', `${y}px`);
-    this.renderer.setStyle(this.host.nativeElement, 'left', `${x}px`);
+    this.renderer.setStyle(this.host.nativeElement, "top", `${y}px`);
+    this.renderer.setStyle(this.host.nativeElement, "left", `${x}px`);
 
     // Set transition only after init, so the :enter animation does not break
     if (!this.host.nativeElement.style.transition)
       setTimeout(() => {
         this.renderer.setStyle(
           this.host.nativeElement,
-          'transition',
+          "transition",
           `top 75ms linear 0s`
         );
       }, this.animationDuration);

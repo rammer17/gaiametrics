@@ -1,13 +1,13 @@
-import { Component, inject } from '@angular/core';
-import { RoleService } from '../../../core/services/role.service';
-import { RoleGetResponse } from '../../../core/models/role.model';
-import { RolesAddComponent } from './roles-add/roles-add.component';
-import { CommonModule } from '@angular/common';
-import { ButtonComponent } from '../../../shared/ng-is-components/button.component';
-import { IsTableComponent } from '../../../shared/ng-is-components/table.components';
+import { Component, inject } from "@angular/core";
+import { RoleService } from "../../../core/services/role.service";
+import { RoleGetResponse } from "../../../core/models/role.model";
+import { RolesAddComponent } from "./roles-add/roles-add.component";
+import { CommonModule } from "@angular/common";
+import { ButtonComponent } from "../../../shared/ng-is-components/button.component";
+import { IsTableComponent } from "../../../shared/ng-is-components/table.components";
 
 @Component({
-  selector: 'app-roles',
+  selector: "app-roles",
   standalone: true,
   imports: [CommonModule, ButtonComponent, IsTableComponent, RolesAddComponent],
   template: `
@@ -40,7 +40,7 @@ import { IsTableComponent } from '../../../shared/ng-is-components/table.compone
             <is-table [data]="roles"></is-table>
             <app-roles-add
               *ngIf="showAddModal"
-              (close)="showAddModal = false"></app-roles-add>
+              (close)="showAddModal = false; fetchRoles()"></app-roles-add>
           </ng-container>
         </div>
       </div>
@@ -55,6 +55,10 @@ export class RolesComponent {
   showAddModal: boolean = false;
 
   ngOnInit(): void {
+    this.fetchRoles();
+  }
+
+  fetchRoles(): void {
     this.roleService.getAll().subscribe((resp: any) => (this.roles = resp));
   }
 }

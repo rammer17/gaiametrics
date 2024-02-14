@@ -1,13 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { ButtonComponent } from '../../../shared/ng-is-components/button.component';
-import { IsTableComponent } from '../../../shared/ng-is-components/table.components';
-import { UserService } from '../../../core/services/user.service';
-import { UserGetResponse } from '../../../core/models/user.model';
-import { UsersAddComponent } from './users-add/users-add.component';
+import { CommonModule } from "@angular/common";
+import { Component, inject } from "@angular/core";
+import { ButtonComponent } from "../../../shared/ng-is-components/button.component";
+import { IsTableComponent } from "../../../shared/ng-is-components/table.components";
+import { UserService } from "../../../core/services/user.service";
+import { UserGetResponse } from "../../../core/models/user.model";
+import { UsersAddComponent } from "./users-add/users-add.component";
 
 @Component({
-  selector: 'app-users',
+  selector: "app-users",
   standalone: true,
   imports: [CommonModule, ButtonComponent, IsTableComponent, UsersAddComponent],
   template: `
@@ -40,7 +40,7 @@ import { UsersAddComponent } from './users-add/users-add.component';
             <is-table [data]="users"></is-table>
             <app-users-add
               *ngIf="showAddModal"
-              (close)="showAddModal = false"></app-users-add>
+              (close)="showAddModal = false; fetchUsers()"></app-users-add>
           </ng-container>
         </div>
       </div>
@@ -54,6 +54,10 @@ export class UsersComponent {
   showAddModal: boolean = false;
 
   ngOnInit(): void {
+    this.fetchUsers();
+  }
+
+  fetchUsers(): void {
     this.userService.getAll().subscribe((resp: any) => (this.users = resp));
   }
 }

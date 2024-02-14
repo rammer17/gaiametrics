@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GaiaMetrics.Controllers
 {
     [Route("[controller]/[action]")]
+    [ApiController]
     public class IoTDeviceController : ControllerBase
     {
         private readonly IIoTDeviceService _iotService;
@@ -26,7 +27,7 @@ namespace GaiaMetrics.Controllers
         
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IoTDeviceCreate")]
-        public async Task<IActionResult> Register(IoTDeviceRegisterRequest request)
+        public async Task<ActionResult> Register(IoTDeviceRegisterRequest request)
         {
             var result = await _iotService.Register(request);
             return Ok(result);

@@ -1,13 +1,13 @@
-import { Component, inject } from '@angular/core';
-import { IoTDeviceService } from '../../../core/services/iot-device.service';
-import { IoTDeviceGetResponse } from '../../../core/models/iot-device.model';
-import { IotDevicesAddComponent } from './iot-devices-add/iot-devices-add.component';
-import { CommonModule } from '@angular/common';
-import { ButtonComponent } from '../../../shared/ng-is-components/button.component';
-import { IsTableComponent } from '../../../shared/ng-is-components/table.components';
+import { Component, inject } from "@angular/core";
+import { IoTDeviceService } from "../../../core/services/iot-device.service";
+import { IoTDeviceGetResponse } from "../../../core/models/iot-device.model";
+import { IotDevicesAddComponent } from "./iot-devices-add/iot-devices-add.component";
+import { CommonModule } from "@angular/common";
+import { ButtonComponent } from "../../../shared/ng-is-components/button.component";
+import { IsTableComponent } from "../../../shared/ng-is-components/table.components";
 
 @Component({
-  selector: 'app-iot-devices',
+  selector: "app-iot-devices",
   standalone: true,
   imports: [
     CommonModule,
@@ -45,7 +45,9 @@ import { IsTableComponent } from '../../../shared/ng-is-components/table.compone
             <is-table [data]="iotDevices"></is-table>
             <app-iot-devices-add
               *ngIf="showAddModal"
-              (close)="showAddModal = false"></app-iot-devices-add>
+              (close)="
+                showAddModal = false; fetchDevices()
+              "></app-iot-devices-add>
           </ng-container>
         </div>
       </div>
@@ -59,6 +61,10 @@ export class IotDevicesComponent {
   showAddModal: boolean = false;
 
   ngOnInit(): void {
+    this.fetchDevices();
+  }
+
+  fetchDevices(): void {
     this.iotService.getAll().subscribe((resp: any) => (this.iotDevices = resp));
   }
 }

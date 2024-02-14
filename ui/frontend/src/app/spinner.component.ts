@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-  selector: 'app-spinner',
+  selector: "app-spinner",
   standalone: true,
   template: `
     <div class="content">
@@ -14,10 +14,10 @@ import { Component } from '@angular/core';
   styles: [
     `
       $bg: var(--primary-medium);
-      $c-01: #5389a6;
-      $c-02: #a6dcee;
+      $c-01: var(--text-accent);
+      $c-02: var(--primary-dark);
 
-      $font-01: 'Oxygen', sans-serif;
+      $font-01: "Oxygen", sans-serif;
 
       .content {
         width: 100vw;
@@ -83,7 +83,7 @@ import { Component } from '@angular/core';
 
             &:before {
               position: absolute;
-              content: '';
+              content: "";
               width: 100%;
               height: 100%;
               background-color: $c-02;

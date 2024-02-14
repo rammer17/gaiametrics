@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GaiaMetrics.Controllers
 {
     [Route("[controller]/[action]")]
+    [ApiController]
     public class DeviceGroupController : ControllerBase
     {
         private readonly IDeviceGroupService _deviceGroupService;

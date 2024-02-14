@@ -1,13 +1,13 @@
-import { Component, inject } from '@angular/core';
-import { SubscriptionPlansAddComponent } from './subscription-plans-add/subscription-plans-add.component';
-import { CommonModule } from '@angular/common';
-import { ButtonComponent } from '../../../shared/ng-is-components/button.component';
-import { IsTableComponent } from '../../../shared/ng-is-components/table.components';
-import { SubscriptionPlanGetAllResponse } from '../../../core/models/subscription-plan.model';
-import { SubscriptionPlanService } from '../../../core/services/subscription-plan.service';
+import { Component, inject } from "@angular/core";
+import { SubscriptionPlansAddComponent } from "./subscription-plans-add/subscription-plans-add.component";
+import { CommonModule } from "@angular/common";
+import { ButtonComponent } from "../../../shared/ng-is-components/button.component";
+import { IsTableComponent } from "../../../shared/ng-is-components/table.components";
+import { SubscriptionPlanGetAllResponse } from "../../../core/models/subscription-plan.model";
+import { SubscriptionPlanService } from "../../../core/services/subscription-plan.service";
 
 @Component({
-  selector: 'app-subscription-plans',
+  selector: "app-subscription-plans",
   standalone: true,
   imports: [
     CommonModule,
@@ -45,7 +45,9 @@ import { SubscriptionPlanService } from '../../../core/services/subscription-pla
             <is-table [data]="subscriptionPlans"></is-table>
             <app-subscription-plans-add
               *ngIf="showAddModal"
-              (close)="showAddModal = false"></app-subscription-plans-add>
+              (close)="
+                showAddModal = false; fetchPlans()
+              "></app-subscription-plans-add>
           </ng-container>
         </div>
       </div>
@@ -61,6 +63,10 @@ export class SubscriptionPlansComponent {
   showAddModal: boolean = false;
 
   ngOnInit(): void {
+    this.fetchPlans();
+  }
+
+  fetchPlans(): void {
     this.planService
       .getAll()
       .subscribe((resp: any) => (this.subscriptionPlans = resp));
