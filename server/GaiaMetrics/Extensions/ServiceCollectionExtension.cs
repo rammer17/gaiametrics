@@ -1,5 +1,6 @@
 ﻿using GaiaMetrics.Interfaces;
 using GaiaMetrics.Services;
+using Microsoft.EntityFrameworkCore;
 using MQTTnet;
 using MQTTnet.Client;
 
@@ -24,6 +25,12 @@ namespace GaiaMetrics.Extensions
             services.AddSingleton<IMqttService, MqttService>();
 
             return services;
+
+        }
+        public static void MigrateDatabase(this IServiceCollection services)
+        {
+            var dbContext = services.BuildServiceProvider().GetRequiredService<GaiaMetricsDbContext>();
+            dbContext.Database.Migrate();
         }
     }
 }
