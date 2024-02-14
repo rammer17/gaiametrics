@@ -4,27 +4,30 @@ import {
   EventEmitter,
   Output,
   inject,
-} from "@angular/core";
-import { DeviceGroupService } from "../../../../core/services/device.group.service";
-import { DeviceGroupCreateRequest } from "../../../../core/models/device-group.model";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+} from '@angular/core';
+import { DeviceGroupService } from '../../../../core/services/device.group.service';
+import { DeviceGroupCreateRequest } from '../../../../core/models/device-group.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
-} from "@angular/forms";
-import { FormFieldComponent } from "../../../../shared/ng-is-components/form-field.component";
-import { ModalComponent } from "../../../../shared/ng-is-components/modal.components";
-import { AsyncPipe, NgIf } from "@angular/common";
-import { Observable, combineLatest, map } from "rxjs";
-import { IoTDeviceService } from "../../../../core/services/iot-device.service";
-import { UserService } from "../../../../core/services/user.service";
-import { IoTDeviceGetResponse } from "../../../../core/models/iot-device.model";
-import { UserGetResponse } from "../../../../core/models/user.model";
+} from '@angular/forms';
+import { FormFieldComponent } from '../../../../shared/ng-is-components/form-field.component';
+import { ModalComponent } from '../../../../shared/ng-is-components/modal.components';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { Observable, combineLatest, map } from 'rxjs';
+import { IoTDeviceService } from '../../../../core/services/iot-device.service';
+import { UserService } from '../../../../core/services/user.service';
+import { IoTDeviceGetResponse } from '../../../../core/models/iot-device.model';
+import { UserGetResponse } from '../../../../core/models/user.model';
+import { FormDropdownComponent } from '../../../../shared/ng-is-components/form-dropdown.components';
+import { FormMultiselectComponent } from '../../../../shared/ng-is-components/form-multiselect.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: "app-device-groups-add",
+  selector: 'app-device-groups-add',
   standalone: true,
   imports: [
     ModalComponent,
@@ -32,6 +35,7 @@ import { UserGetResponse } from "../../../../core/models/user.model";
     FormFieldComponent,
     NgIf,
     AsyncPipe,
+    FormMultiselectComponent,
   ],
   template: `
     <is-modal
@@ -54,23 +58,16 @@ import { UserGetResponse } from "../../../../core/models/user.model";
           [placeholder]="'Name'"
           [icon]="'signature'"></app-form-field>
 
-        <app-form-field
-          [formControlName]="'latitude'"
-          [type]="'number'"
-          [placeholder]="'Latitude'"
-          [icon]="'globe'"></app-form-field>
-
-        <app-form-field
-          [formControlName]="'longtitude'"
-          [type]="'number'"
-          [placeholder]="'Longtitude'"
-          [icon]="'globe'"></app-form-field>
-
         <ng-container *ngIf="vm$ | async as vm">
-          <app-form-dropdown
-            [formControlName]="'deviceGroupId'"
-            [data]="vm.deviceGroups"
-            [placeholder]="'DeviceGroup'"></app-form-dropdown>
+          <app-form-multiselect
+            [formControlName]="'deviceIds'"
+            [data]="vm.devices"
+            [placeholder]="'Devices'"></app-form-multiselect>
+
+          <app-form-multiselect
+            [formControlName]="'userIds'"
+            [data]="vm.users"
+            [placeholder]="'Users'"></app-form-multiselect>
         </ng-container>
       </form>
     </ng-template>
@@ -82,8 +79,9 @@ export class DeviceGroupsAddComponent {
   private readonly userService: UserService = inject(UserService);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly fb: FormBuilder = inject(FormBuilder);
+  private readonly toastr: ToastrService = inject(ToastrService);
 
-  @Output("close") close: EventEmitter<void> = new EventEmitter<void>();
+  @Output('close') close: EventEmitter<void> = new EventEmitter<void>();
 
   vm$?: Observable<any>;
 
@@ -98,16 +96,17 @@ export class DeviceGroupsAddComponent {
     if (!this.form) return;
 
     const body: DeviceGroupCreateRequest = {
-      name: this.form.get("name")?.value,
-      deviceIds: this.form.get("deviceIds")?.value,
-      userIds: this.form.get("longtitude")?.value,
+      name: this.form.get('name')?.value,
+      deviceIds: this.form.get('deviceIds')?.value.map((x: any) => x.value),
+      userIds: this.form.get('userIds')?.value.map((x: any) => x.value),
     };
 
+    console.log(body);
     this.planService
       .create(body)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        //TODO Add toast
+        this.toastr.success('Success', 'Device Group added successfully');
         this.onClose();
       });
   }
@@ -118,9 +117,9 @@ export class DeviceGroupsAddComponent {
 
   private initForm(): void {
     this.form = this.fb.group({
-      name: this.fb.control("", [Validators.required]),
-      deviceIds: this.fb.control("", [Validators.required]),
-      userIds: this.fb.control("", [Validators.required]),
+      name: this.fb.control('', [Validators.required]),
+      deviceIds: this.fb.control('', [Validators.required]),
+      userIds: this.fb.control('', [Validators.required]),
     });
   }
 
@@ -141,7 +140,7 @@ export class DeviceGroupsAddComponent {
         map((x: UserGetResponse[]) => {
           const y = x.map((x) => {
             return {
-              name: x.userName,
+              name: x.username,
               value: x.id,
             };
           });

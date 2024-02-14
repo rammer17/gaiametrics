@@ -12,6 +12,13 @@ import { CommonModule } from '@angular/common';
 import { fromEvent } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TrapFocusDirective } from './trap-focus.directive';
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+} from '@angular/animations';
 
 @Component({
   selector: 'is-modal',
@@ -22,10 +29,12 @@ import { TrapFocusDirective } from './trap-focus.directive';
       <dialog
         style.width="{{ width }}px"
         [open]="isModalVisible"
+        [@defaultAnimation]="isModalVisible"
         class="position-relative">
         <ng-container
           *ngTemplateOutlet="
-            headerTemplate || defaultHeaderTemplate
+            headerTemplate || defaultHeaderTemplate;
+            context: { $implicit: context }
           "></ng-container>
         <ng-template #defaultHeaderTemplate>
           <h3 class="modal-heading">Are you sure?</h3>
@@ -33,7 +42,8 @@ import { TrapFocusDirective } from './trap-focus.directive';
 
         <ng-container
           *ngTemplateOutlet="
-            contentTemplate || defaultContentTemplate
+            contentTemplate || defaultContentTemplate;
+            context: { $implicit: context }
           "></ng-container>
         <ng-template #defaultContentTemplate>
           <p class="content-paragraph">
@@ -124,15 +134,32 @@ import { TrapFocusDirective } from './trap-focus.directive';
       }
     `,
   ],
+  animations: [
+    trigger('defaultAnimation', [
+      state('void, false', style({ transform: 'scale(0)' })),
+      transition(':enter', [
+        style({
+          opacity: 0,
+          transform: 'translateY(30%) scale(0.5)',
+        }),
+        animate(
+          '150ms',
+          style({ opacity: 1, transform: 'translateY(0) scale(1)' })
+        ),
+      ]),
+      transition(':leave', [
+        animate('150ms', style({ opacity: 0, transform: 'scale(0.95)' })),
+      ]),
+    ]),
+  ],
 })
 export class ModalComponent {
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly renderer: Renderer2 = inject(Renderer2);
 
-  @Input({ alias: 'header', required: true })
-  headerTemplate?: TemplateRef<any>;
-  @Input({ alias: 'content', required: true })
-  contentTemplate?: TemplateRef<any>;
+  @Input({ alias: 'header', required: true }) headerTemplate?: TemplateRef<any>;
+  @Input({ alias: 'content', required: false }) contentTemplate: any;
+  @Input({ alias: 'context', required: false }) context: any;
   @Input({ alias: 'open', required: true }) isModalVisible: boolean = false;
   @Input({ alias: 'width', required: true }) width: number = 600;
 

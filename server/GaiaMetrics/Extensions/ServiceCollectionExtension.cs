@@ -16,12 +16,12 @@ namespace GaiaMetrics.Extensions
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ISubscriptionPlanService, SubscriptionPlanService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IMqttClient>(sp =>
+            services.AddSingleton<IMqttClient>(sp =>
             {
                 var factory = new MqttFactory();
                 return factory.CreateMqttClient();
             });
-            services.AddScoped<IMqttService, MqttService>();
+            services.AddSingleton<IMqttService, MqttService>();
 
             return services;
         }

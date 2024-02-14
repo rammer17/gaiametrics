@@ -48,7 +48,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<GaiaMetricsDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection"));
-});
+}, ServiceLifetime.Transient, ServiceLifetime.Singleton);
 
 //Enable JWT authenitcation
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -83,12 +83,12 @@ configuration.GetSection(nameof(ClientSettings)).Bind(clientSettings);
 ServiceCollectionExtension.AddServices(builder.Services);
 
 // Add services to the container.
-builder.Services.AddScoped(sp =>
+builder.Services.AddSingleton(sp =>
 {
     var options = new MqttClientOptionsBuilder()
         .WithClientId("ClientId")
         .WithTcpServer(brokerHostSettings.Host, brokerHostSettings.Port)
-        .WithCredentials(clientSettings.UserName, clientSettings.Password)
+/*        .WithCredentials(clientSettings.UserName, clientSettings.Password)*/
         .Build();
 
     return options;

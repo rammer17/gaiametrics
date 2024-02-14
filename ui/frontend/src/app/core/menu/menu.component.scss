@@ -5,7 +5,7 @@
   // makes the menu stay in place, even when content is scrollable
   position: sticky;
   top: 0;
-  background-color: var(--primary-light);
+  background-color: var(--primary-darker);
   // make width transition smooth when not resizing manually
   &:not(.resizing) {
     transition: width 0.6s cubic-bezier(0.02, 0.68, 0.63, 0.98);
@@ -17,6 +17,7 @@
     box-sizing: border-box;
     .account-wrapper {
       border: 2px solid var(--border-color);
+      background-color: var(--primary-dark);
       .account-popover-wrapper {
         border: 2px solid var(--border-color);
         background-color: var(--primary-light);
@@ -27,7 +28,7 @@
     }
     .menu-section-wrapper {
       li {
-        background-color: var(--primary-light);
+        background-color: var(--primary-dark);
         list-style: none;
         transition: 0.25s;
         span {
@@ -37,22 +38,36 @@
           transition: 0.1s linear;
         }
         .child-menu-item {
-          background-color: var(--primary-light);
+          background-color: var(--primary-medium);
           list-style: none;
           transition: 0.25s;
+        }
+        li.active-child {
+          background-color: var(--primary-medium);
+          i,
+          span {
+            color: var(--text-accent) !important;
+          }
         }
       }
       li:hover {
         background-color: var(--primary-medium);
+        i,
+        span {
+          color: var(--text-medium) !important;
+        }
       }
       li.active {
-        background-color: var(--primary-dark);
+        background-color: var(--primary-medium);
         span.parent-menu,
         i.parent-menu {
-          color: var(--text-light) !important;
+          color: var(--text-accent) !important;
         }
-        .menu-expandable {
+        i.fa-chevron-right {
           transform: rotate(90deg);
+        }
+        li.child-menu-item:hover {
+          background-color: var(--primary-light);
         }
       }
     }
@@ -78,7 +93,7 @@
     &::after {
       content: "";
       display: block;
-      height: 100%;
+      // height: 100%;
       width: 24px;
       position: absolute;
       right: -12px;

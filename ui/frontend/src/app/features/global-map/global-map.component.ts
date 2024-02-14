@@ -1,22 +1,68 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { IoTDeviceService } from '../../core/services/iot-device.service';
+import { take } from 'rxjs';
+import { IoTDeviceGetResponse } from '../../core/models/iot-device.model';
+import { NgIf } from '@angular/common';
+import { ModalComponent } from '../../shared/ng-is-components/modal.components';
 
 declare const google: any;
 
 @Component({
   selector: 'app-global-map',
   standalone: true,
-  imports: [],
+  imports: [ModalComponent, NgIf],
   templateUrl: './global-map.component.html',
   styleUrl: './global-map.component.scss',
 })
 export class GlobalMapComponent {
-  map: any;
+  private readonly iotDeviceService: IoTDeviceService =
+    inject(IoTDeviceService);
 
-  ngOnInit() {
+  map: any;
+  selectedDevice?: IoTDeviceGetResponse;
+  showDeviceInfo: boolean = false;
+
+  ngOnInit(): void {
     this.initMap();
   }
 
-  initMap() {
+  fetchIoTDevices(): void {
+    this.iotDeviceService
+      .getAll()
+      .pipe(take(1))
+      .subscribe((resp: IoTDeviceGetResponse[]) => this.initMarkers(resp));
+  }
+
+  onCloseDeviceInfoWindow(): void {
+    this.selectedDevice = undefined;
+    this.showDeviceInfo = false;
+  }
+
+  private initMarkers(iotDevices: IoTDeviceGetResponse[]): void {
+    iotDevices.forEach((device) => {
+      this.addMarker(device);
+    });
+  }
+
+  private addMarker(device: IoTDeviceGetResponse): void {
+    const marker = new google.maps.Marker({
+      position: { lat: device.latitude, lng: device.longtitude },
+      map: this.map,
+      icon: {
+        url: 'https://cdn-icons-png.flaticon.com/512/6432/6432461.png', // url
+        scaledSize: new google.maps.Size(50, 50), // scaled size
+      },
+      animation: google.maps.Animation.DROP,
+    });
+
+    google.maps.event.addDomListener(marker, 'click', () => {
+      console.log(device);
+      this.selectedDevice = device;
+      this.showDeviceInfo = true;
+    });
+  }
+
+  private initMap(): void {
     const mapOptions = {
       mapTypeControl: false,
       fullscreenControl: false,
@@ -108,31 +154,6 @@ export class GlobalMapComponent {
     };
     this.map = new google.maps.Map(document.getElementById('map')!, mapOptions);
 
-    // Initialize markers
-    this.initMarkers();
-
-    google.maps.event.addListener(this.map, 'click', (event: any) => {
-      this.addMarker(event.latLng);
-    });
-  }
-
-  initMarkers() {
-    // Example: Initialize markers at specific locations
-    const markerLocations = [{ lat: 42.8767, lng: 25.4988 }];
-
-    markerLocations.forEach((location) => {
-      this.addMarker(location);
-    });
-  }
-
-  addMarker(location: any) {
-    new google.maps.Marker({
-      position: location,
-      map: this.map,
-      icon: {
-        url: 'https://cdn-icons-png.flaticon.com/512/6432/6432461.png', // url
-        scaledSize: new google.maps.Size(50, 50), // scaled size
-      },
-    });
+    this.fetchIoTDevices();
   }
 }

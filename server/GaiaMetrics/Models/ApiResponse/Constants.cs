@@ -14,6 +14,8 @@
         public const string SHORT = "TooShort";
         public const string PRICE = "Price";
         public const string INVALID = "Invalid";
+        public const string MQTT = "Mqtt";
+        public const string NOT_CONNECTED = "NotConnected";
 
     }
 }

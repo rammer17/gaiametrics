@@ -1,13 +1,15 @@
-import { Component, inject } from "@angular/core";
-import { DeviceGroupService } from "../../../core/services/device.group.service";
-import { DeviceGroupGetResponse } from "../../../core/models/device-group.model";
-import { DeviceGroupsAddComponent } from "./device-groups-add/device-groups-add.component";
-import { CommonModule } from "@angular/common";
-import { ButtonComponent } from "../../../shared/ng-is-components/button.component";
-import { IsTableComponent } from "../../../shared/ng-is-components/table.components";
+import { Component, inject } from '@angular/core';
+import { DeviceGroupService } from '../../../core/services/device.group.service';
+import { DeviceGroupGetResponse } from '../../../core/models/device-group.model';
+import { DeviceGroupsAddComponent } from './device-groups-add/device-groups-add.component';
+import { CommonModule } from '@angular/common';
+import { ButtonComponent } from '../../../shared/ng-is-components/button.component';
+import { IsTableComponent } from '../../../shared/ng-is-components/table.components';
+import { ToastrService } from 'ngx-toastr';
+import { take } from 'rxjs';
 
 @Component({
-  selector: "app-device-groups",
+  selector: 'app-device-groups',
   standalone: true,
   imports: [
     CommonModule,
@@ -42,7 +44,9 @@ import { IsTableComponent } from "../../../shared/ng-is-components/table.compone
       <div class="row p-0 m-0 mt-3">
         <div class="col-12">
           <ng-container *ngIf="deviceGroups?.length! > 0">
-            <is-table [data]="deviceGroups"></is-table>
+            <is-table
+              [data]="deviceGroups"
+              (action)="actionHandler($event)"></is-table>
             <app-device-groups-add
               *ngIf="showAddModal"
               (close)="
@@ -57,6 +61,7 @@ import { IsTableComponent } from "../../../shared/ng-is-components/table.compone
 export class DeviceGroupsComponent {
   private readonly deviceGroupService: DeviceGroupService =
     inject(DeviceGroupService);
+  private readonly toastr: ToastrService = inject(ToastrService);
 
   deviceGroups: DeviceGroupGetResponse[] = [];
   showAddModal: boolean = false;
@@ -64,9 +69,22 @@ export class DeviceGroupsComponent {
   ngOnInit(): void {
     this.fetchDeviceGroups();
   }
+
   fetchDeviceGroups(): void {
     this.deviceGroupService
       .getAll()
       .subscribe((resp: any) => (this.deviceGroups = resp));
+  }
+
+  actionHandler(action: { type: string; data: any }): void {
+    if (action.type === 'DELETE') {
+      this.deviceGroupService
+        .delete(action.data.id)
+        .pipe(take(1))
+        .subscribe(() => {
+          this.toastr.success('Success', 'Device group was deleted!');
+          this.fetchDeviceGroups();
+        });
+    }
   }
 }

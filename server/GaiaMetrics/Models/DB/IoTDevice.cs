@@ -9,6 +9,8 @@
 
         //1:N relationship 
         public int? DeviceGroupId { get; set; }
-        public DeviceGroup DeviceGroup { get; set; }
+        public DeviceGroup? DeviceGroup { get; set; }
+
+        public string[] Data { get; set; }
     }
 }

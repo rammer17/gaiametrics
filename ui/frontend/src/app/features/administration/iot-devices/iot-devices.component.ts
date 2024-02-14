@@ -1,13 +1,14 @@
-import { Component, inject } from "@angular/core";
-import { IoTDeviceService } from "../../../core/services/iot-device.service";
-import { IoTDeviceGetResponse } from "../../../core/models/iot-device.model";
-import { IotDevicesAddComponent } from "./iot-devices-add/iot-devices-add.component";
-import { CommonModule } from "@angular/common";
-import { ButtonComponent } from "../../../shared/ng-is-components/button.component";
-import { IsTableComponent } from "../../../shared/ng-is-components/table.components";
+import { Component, inject } from '@angular/core';
+import { IoTDeviceService } from '../../../core/services/iot-device.service';
+import { IoTDeviceGetResponse } from '../../../core/models/iot-device.model';
+import { IotDevicesAddComponent } from './iot-devices-add/iot-devices-add.component';
+import { CommonModule } from '@angular/common';
+import { ButtonComponent } from '../../../shared/ng-is-components/button.component';
+import { IsTableComponent } from '../../../shared/ng-is-components/table.components';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: "app-iot-devices",
+  selector: 'app-iot-devices',
   standalone: true,
   imports: [
     CommonModule,
@@ -42,7 +43,9 @@ import { IsTableComponent } from "../../../shared/ng-is-components/table.compone
       <div class="row p-0 m-0 mt-3">
         <div class="col-12">
           <ng-container *ngIf="iotDevices?.length! > 0">
-            <is-table [data]="iotDevices"></is-table>
+            <is-table
+              [data]="iotDevices"
+              (action)="actionHandler($event)"></is-table>
             <app-iot-devices-add
               *ngIf="showAddModal"
               (close)="
@@ -56,6 +59,7 @@ import { IsTableComponent } from "../../../shared/ng-is-components/table.compone
 })
 export class IotDevicesComponent {
   private readonly iotService: IoTDeviceService = inject(IoTDeviceService);
+  private readonly toastr: ToastrService = inject(ToastrService);
 
   iotDevices: IoTDeviceGetResponse[] = [];
   showAddModal: boolean = false;
@@ -66,5 +70,11 @@ export class IotDevicesComponent {
 
   fetchDevices(): void {
     this.iotService.getAll().subscribe((resp: any) => (this.iotDevices = resp));
+  }
+
+  actionHandler(action: { type: string; data: any }): void {
+    if (action.type === 'DELETE') {
+      this.toastr.error('Forbidden', 'IoT Device cannot be deleted!');
+    }
   }
 }

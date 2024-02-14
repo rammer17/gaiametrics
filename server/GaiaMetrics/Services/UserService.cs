@@ -108,7 +108,7 @@ namespace GaiaMetrics.Services
                 Token = token
             };
 
-/*            //Map broker host settings
+            //Map broker host settings
             BrokerHostSettings brokerHostSettings = new BrokerHostSettings();
             _configuration.GetSection(nameof(BrokerHostSettings)).Bind(brokerHostSettings);
 
@@ -126,7 +126,9 @@ namespace GaiaMetrics.Services
                     .Build();
 
                 await _mqttService.CreateAndConnectMqttClient(mqttClientOptions);
-            }*/
+/*                await _mqttService.SubscribeToTopicAsync("api");*/
+            }
+
 
             return ApiResponseData<UserLoginResponse>.CorrectResponse(response);
         }

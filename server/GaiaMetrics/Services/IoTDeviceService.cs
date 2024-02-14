@@ -22,7 +22,8 @@ namespace GaiaMetrics.Services
                 Id = x.Id,
                 Name = x.Name,
                 Latitude = x.Latitude,
-                Longtitude = x.Longtitude
+                Longtitude = x.Longtitude,
+                Data = x.Data
             }).ToList();
 
             return ApiResponseData<ICollection<IoTDeviceGetResponse>>.CorrectResponse(data);

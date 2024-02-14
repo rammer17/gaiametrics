@@ -15,15 +15,17 @@
         <div
           *ngIf="!vm.menuCollapsed"
           class="d-flex flex-column align-items-start justify-content-center">
-          <span class="account-name fw-bold">{{ vm.user.username }}</span>
-          <span class="account-plan text-medium">
+          <span class="account-name fw-bold text-light">
+            {{ vm.user.username }}
+          </span>
+          <span class="account-plan text-accent">
             {{ vm.user.subscriptionPlanName }}
           </span>
         </div>
       </div>
       <i
         *ngIf="!vm.menuCollapsed"
-        class="fa fa-solid fa-ellipsis-vertical cursor-pointer fs-5"
+        class="fa fa-solid fa-ellipsis-vertical cursor-pointer fs-5 text-light"
         [isPopover]="showAccountPopover"
         (click)="showAccountPopover = !showAccountPopover"
         [template]="accountPopoverTemplate"
@@ -48,30 +50,35 @@
     <ul class="menu-section-wrapper p-0 m-0">
       <li
         *ngFor="let item of menuList"
-        [routerLink]="item.children?.length === 0 ? [item.routerLink] : []"
+        [routerLink]="[item.routerLink]"
         [routerLinkActive]="'active'"
         #test="routerLinkActive"
         [ngClass]="{ 'justify-content-center': vm.menuCollapsed }"
         class="d-flex flex-column rounded cursor-pointer user-select-none px-3 py-2 my-3">
-        <div class="d-flex align-items-center">
+        <div
+          class="d-flex align-items-center"
+          [ngClass]="{ 'justify-content-center': vm.menuCollapsed }">
           <i
-            class="parent-menu menu-expandable fa fa-solid fa-chevron-right fs-5 text-dark me-3"></i>
+            *ngIf="!vm.menuCollapsed"
+            class="parent-menu fa fa-solid fa-chevron-right fs-5 text-light me-3"></i>
           <i
-            class="parent-menu fa fa-solid fa-{{ item.icon }} text-dark fs-3"
+            class="parent-menu fa fa-solid fa-{{ item.icon }} text-light fs-3"
             [ngClass]="{ 'me-3': !vm.menuCollapsed }"></i>
           <span
             *ngIf="!vm.menuCollapsed"
-            class="text-dark fw-bold fs-5 parent-menu">
+            class="text-light fw-bold fs-5 parent-menu">
             {{ item.label }}
           </span>
         </div>
 
         <ng-container *ngIf="item.children?.length > 0 && test.isActive">
-          <ul class="p-o m-0">
+          <ul class="m-0" [ngClass]="{ 'p-0': vm.menuCollapsed }">
             <li
               *ngFor="let child of item.children"
-              class="child-menu-item px-3 py-2 my-3"
+              class="child-menu-item px-3 py-2 my-3 d-flex align-items-center rounded"
+              [ngClass]="{ 'justify-content-center': vm.menuCollapsed }"
               [routerLink]="[child.routerLink]"
+              (click)="$event.stopPropagation()"
               [routerLinkActive]="'active-child'">
               <i
                 class="fa fa-solid fa-{{ child.icon }} text-dark fs-5"

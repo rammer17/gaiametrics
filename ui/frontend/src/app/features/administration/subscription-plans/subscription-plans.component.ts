@@ -1,13 +1,15 @@
-import { Component, inject } from "@angular/core";
-import { SubscriptionPlansAddComponent } from "./subscription-plans-add/subscription-plans-add.component";
-import { CommonModule } from "@angular/common";
-import { ButtonComponent } from "../../../shared/ng-is-components/button.component";
-import { IsTableComponent } from "../../../shared/ng-is-components/table.components";
-import { SubscriptionPlanGetAllResponse } from "../../../core/models/subscription-plan.model";
-import { SubscriptionPlanService } from "../../../core/services/subscription-plan.service";
+import { Component, inject } from '@angular/core';
+import { SubscriptionPlansAddComponent } from './subscription-plans-add/subscription-plans-add.component';
+import { CommonModule } from '@angular/common';
+import { ButtonComponent } from '../../../shared/ng-is-components/button.component';
+import { IsTableComponent } from '../../../shared/ng-is-components/table.components';
+import { SubscriptionPlanGetAllResponse } from '../../../core/models/subscription-plan.model';
+import { SubscriptionPlanService } from '../../../core/services/subscription-plan.service';
+import { ToastrService } from 'ngx-toastr';
+import { take } from 'rxjs';
 
 @Component({
-  selector: "app-subscription-plans",
+  selector: 'app-subscription-plans',
   standalone: true,
   imports: [
     CommonModule,
@@ -42,7 +44,9 @@ import { SubscriptionPlanService } from "../../../core/services/subscription-pla
       <div class="row p-0 m-0 mt-3">
         <div class="col-12">
           <ng-container *ngIf="subscriptionPlans?.length! > 0">
-            <is-table [data]="subscriptionPlans"></is-table>
+            <is-table
+              [data]="subscriptionPlans"
+              (action)="actionHandler($event)"></is-table>
             <app-subscription-plans-add
               *ngIf="showAddModal"
               (close)="
@@ -58,6 +62,7 @@ export class SubscriptionPlansComponent {
   private readonly planService: SubscriptionPlanService = inject(
     SubscriptionPlanService
   );
+  private readonly toastr: ToastrService = inject(ToastrService);
 
   subscriptionPlans: SubscriptionPlanGetAllResponse[] = [];
   showAddModal: boolean = false;
@@ -70,5 +75,17 @@ export class SubscriptionPlansComponent {
     this.planService
       .getAll()
       .subscribe((resp: any) => (this.subscriptionPlans = resp));
+  }
+
+  actionHandler(action: { type: string; data: any }): void {
+    if (action.type === 'DELETE') {
+      this.planService
+        .delete(action.data.id)
+        .pipe(take(1))
+        .subscribe(() => {
+          this.toastr.success('Success', 'Subscription plan was deleted!');
+          this.fetchPlans();
+        });
+    }
   }
 }

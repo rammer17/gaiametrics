@@ -27,7 +27,8 @@ namespace GaiaMetrics.Services
                     Id = y.Id,
                     Name = y.Name,
                     Latitude = y.Latitude,
-                    Longtitude = y.Longtitude
+                    Longtitude = y.Longtitude,
+                    Data = y.Data
                 }).ToList()
             }).ToList();
 
@@ -59,7 +60,7 @@ namespace GaiaMetrics.Services
         {
             var deviceGroup = await _dbContext.DeviceGroups.FirstOrDefaultAsync(x => x.Id == request.Id);
 
-            if(deviceGroup is null)
+            if (deviceGroup is null)
             {
                 return ApiResponse.BadResponse(nameof(DeviceGroup), Constants.NOT_FOUND);
             }
@@ -76,7 +77,7 @@ namespace GaiaMetrics.Services
 
         public async Task<ApiResponse> Delete(int id)
         {
-            var deviceGroupForDelete = await _dbContext.DeviceGroups.FirstOrDefaultAsync(x => x.Id == id);
+            var deviceGroupForDelete = await _dbContext.DeviceGroups.Include(x => x.Devices).Include(y => y.Users).FirstOrDefaultAsync(x => x.Id == id);
 
             if (deviceGroupForDelete is null)
             {

@@ -29,6 +29,12 @@ namespace GaiaMetrics
                 .HasOne(rc => rc.Role)
                 .WithMany(r => r.RoleClaims)
                 .HasForeignKey(rc => rc.RoleId);
+
+            modelBuilder.Entity<IoTDevice>()
+                        .Property(e => e.Data)
+                        .HasConversion(
+                            v => string.Join(',', v),
+                            v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
         }
     }
 }

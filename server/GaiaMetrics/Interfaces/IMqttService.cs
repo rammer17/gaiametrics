@@ -1,4 +1,5 @@
-﻿using MQTTnet.Client;
+﻿using GaiaMetrics.Models.Response;
+using MQTTnet.Client;
 
 namespace GaiaMetrics.Services
 {
@@ -6,6 +7,6 @@ namespace GaiaMetrics.Services
     {
         Task CreateAndConnectMqttClient(MqttClientOptions options);
         Task ConnectAsync();
-        Task SubscribeToTopicAsync(string topic);
+        Task<ApiResponse> SubscribeToTopicAsync(string topic);
     }
 }

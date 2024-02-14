@@ -1,18 +1,20 @@
-import { CommonModule } from "@angular/common";
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
+  Output,
   TemplateRef,
   inject,
-} from "@angular/core";
-import { PopoverDirective } from "./popover.directive";
-import { Observable, BehaviorSubject, switchMap, of } from "rxjs";
-import { FormsModule } from "@angular/forms";
-import { ButtonComponent } from "./button.component";
+} from '@angular/core';
+import { PopoverDirective } from './popover.directive';
+import { Observable, BehaviorSubject, switchMap, of, fromEvent } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { ButtonComponent } from './button.component';
 @Component({
-  selector: "is-table",
+  selector: 'is-table',
   standalone: true,
   imports: [CommonModule, PopoverDirective, FormsModule, ButtonComponent],
   template: `
@@ -78,7 +80,8 @@ import { ButtonComponent } from "./button.component";
                   [isPopover]="showActions && actionIndex === i"
                   [position]="'bottom-inline-right'"
                   [appendTo]="'body'"
-                  [template]="actionsTemplate"></i>
+                  [template]="actionsTemplate"
+                  [templateContext]="{ row: row, i: i }"></i>
               </td>
             </tr>
           </tbody>
@@ -86,12 +89,14 @@ import { ButtonComponent } from "./button.component";
       </div>
     </div>
 
-    <ng-template #actionsTemplate>
+    <ng-template #actionsTemplate let-data>
       <div class="default-actions-template">
         <!-- <div class="sort-options">Create</div>
         <div class="sort-options">Edit</div>
         <div class="divider"></div> -->
-        <div class="sort-options text-danger">
+        <div
+          class="sort-options text-danger"
+          (click)="actionHandler('DELETE', data); $event.preventDefault()">
           <i class="fa fa-solid fa-trash-can-xmark text-danger"></i>
           <span>Delete</span>
         </div>
@@ -288,8 +293,9 @@ import { ButtonComponent } from "./button.component";
 export class IsTableComponent {
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
-  @Input("headerTemplate") headerTemplate?: TemplateRef<any>;
-  @Input("data") data: any[] = [];
+  @Output('action') action: EventEmitter<any> = new EventEmitter<any>();
+  @Input('headerTemplate') headerTemplate?: TemplateRef<any>;
+  @Input('data') data: any[] = [];
 
   fields: any;
   data$?: Observable<any>;
@@ -312,6 +318,11 @@ export class IsTableComponent {
     this.initDataObs();
   }
 
+  actionHandler(actionType: string, row: any): void {
+    this.onTogglePopover('ACTION', row.i);
+    this.action.emit({ type: actionType, data: row.row });
+  }
+
   private initDataObs(): void {
     this.data$ = this.sortAction$.pipe(
       switchMap(() => {
@@ -319,10 +330,10 @@ export class IsTableComponent {
           this.data.sort((a, b) => {
             return a[this.fields[this.sortIndex].name.toLowerCase()] <
               b[this.fields[this.sortIndex].name.toLowerCase()]
-              ? this.sortOrder === "ASC"
+              ? this.sortOrder === 'ASC'
                 ? -1
                 : 1
-              : this.sortOrder === "ASC"
+              : this.sortOrder === 'ASC'
               ? 1
               : -1;
           });
@@ -332,7 +343,7 @@ export class IsTableComponent {
     );
   }
 
-  sortOrder?: "ASC" | "DESC";
+  sortOrder?: 'ASC' | 'DESC';
   tempSortIndex: number = -1;
   sortIndex: number = -1;
   actionIndex: number = -1;
@@ -343,7 +354,7 @@ export class IsTableComponent {
 
   onTogglePopover(type: PopoverType, index?: number): void {
     switch (type) {
-      case "SORT":
+      case 'SORT':
         // Toggle sort popover
         this.showTableHeadSorting =
           this.tempSortIndex !== index ? true : !this.showTableHeadSorting;
@@ -353,7 +364,7 @@ export class IsTableComponent {
         this.actionIndex = -1;
         this.showToggleColumns = false;
         break;
-      case "ACTION":
+      case 'ACTION':
         // Toggle actions popover
         this.showActions =
           this.actionIndex !== index ? true : !this.showActions;
@@ -363,7 +374,7 @@ export class IsTableComponent {
         this.tempSortIndex = -1;
         this.showToggleColumns = false;
         break;
-      case "TOGGLE_COLUMN":
+      case 'TOGGLE_COLUMN':
         // Toggle columns popover
         this.showToggleColumns = !this.showToggleColumns;
         // Close all other popovers
@@ -377,7 +388,7 @@ export class IsTableComponent {
     }
   }
 
-  onSortTableRows(order: "ASC" | "DESC"): void {
+  onSortTableRows(order: 'ASC' | 'DESC'): void {
     this.sortOrder = order;
     this.sortIndex = this.tempSortIndex;
     this.sortAction$.next(null);
@@ -394,4 +405,4 @@ export class IsTableComponent {
   }
 }
 
-export type PopoverType = "SORT" | "ACTION" | "TOGGLE_COLUMN";
+export type PopoverType = 'SORT' | 'ACTION' | 'TOGGLE_COLUMN';

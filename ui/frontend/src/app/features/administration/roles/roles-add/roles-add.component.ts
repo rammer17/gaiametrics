@@ -16,6 +16,7 @@ import { FormFieldComponent } from '../../../../shared/ng-is-components/form-fie
 import { ModalComponent } from '../../../../shared/ng-is-components/modal.components';
 import { RoleService } from '../../../../core/services/role.service';
 import { RoleCreateRequest } from '../../../../core/models/role.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-roles-add',
@@ -59,6 +60,7 @@ export class RolesAddComponent {
   private readonly roleService: RoleService = inject(RoleService);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly fb: FormBuilder = inject(FormBuilder);
+  private readonly toastr: ToastrService = inject(ToastrService);
 
   @Output('close') close: EventEmitter<void> = new EventEmitter<void>();
 
@@ -81,7 +83,7 @@ export class RolesAddComponent {
       .createRole(body)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        //TODO Add toast
+        this.toastr.success('Success', 'Role added successfully');
         this.onClose();
       });
   }

@@ -1,6 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using GaiaMetrics.Models.ApiResponse;
+using GaiaMetrics.Models.DB;
+using GaiaMetrics.Models.Response;
+using Microsoft.EntityFrameworkCore;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
@@ -22,15 +26,26 @@ namespace GaiaMetrics.Services
             _mqttClient.ApplicationMessageReceivedAsync += HandleIncomingMessage;
         }
 
-        private async Task HandleIncomingMessage(MqttApplicationMessageReceivedEventArgs eventArgs)
+        private async Task<ApiResponse> HandleIncomingMessage(MqttApplicationMessageReceivedEventArgs eventArgs)
         {
             var topic = eventArgs.ApplicationMessage.Topic;
             var payload = Encoding.UTF8.GetString(eventArgs.ApplicationMessage.Payload);
 
-            var userId = GetUserIdFromClientId(eventArgs.ClientId);
-            var user = _dbContext.Users.FirstOrDefault(x => x.Id == int.Parse(userId));
+            var iotDevice = await _dbContext.IoTDevices.FirstOrDefaultAsync(x => x.Id == int.Parse(topic));
 
-            if (user is null) return;
+            if (iotDevice is null) return ApiResponse.BadResponse(nameof(IoTDevice), Constants.NOT_FOUND);
+
+            List<string> list = new List<string>();
+            list.AddRange(iotDevice.Data);
+            list.Add(payload);
+            String[] str = list.ToArray();
+
+            iotDevice.Data = str;
+
+            _dbContext.IoTDevices.Update(iotDevice);
+            await _dbContext.SaveChangesAsync();
+
+            return ApiResponse.CorrectResponse();
         }
 
         public async Task CreateAndConnectMqttClient(MqttClientOptions options)
@@ -46,29 +61,16 @@ namespace GaiaMetrics.Services
             }
             await _mqttClient.ConnectAsync(_mqttOptions, CancellationToken.None);
         }
-        public async Task SubscribeToTopicAsync(string topic)
+        public async Task<ApiResponse> SubscribeToTopicAsync(string topic)
         {
             if (!_mqttClient.IsConnected)
             {
-                throw new InvalidOperationException("MQTT client is not connected.");
+                return ApiResponse.BadResponse(Constants.MQTT, Constants.NOT_CONNECTED);
             }
 
             await _mqttClient.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(topic).Build());
-        }
 
-        private string GetUserIdFromClientId(string jwtToken)
-        {
-            // Decode the JWT token
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(jwtToken);
-
-            // Extract claims from the JWT token
-            var claims = token.Claims;
-
-            // Find the "Name" claim
-            var userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-
-            return userId;
+            return ApiResponse.CorrectResponse();
         }
     }
 }

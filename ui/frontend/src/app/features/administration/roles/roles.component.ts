@@ -1,13 +1,15 @@
-import { Component, inject } from "@angular/core";
-import { RoleService } from "../../../core/services/role.service";
-import { RoleGetResponse } from "../../../core/models/role.model";
-import { RolesAddComponent } from "./roles-add/roles-add.component";
-import { CommonModule } from "@angular/common";
-import { ButtonComponent } from "../../../shared/ng-is-components/button.component";
-import { IsTableComponent } from "../../../shared/ng-is-components/table.components";
+import { Component, inject } from '@angular/core';
+import { RoleService } from '../../../core/services/role.service';
+import { RoleGetResponse } from '../../../core/models/role.model';
+import { RolesAddComponent } from './roles-add/roles-add.component';
+import { CommonModule } from '@angular/common';
+import { ButtonComponent } from '../../../shared/ng-is-components/button.component';
+import { IsTableComponent } from '../../../shared/ng-is-components/table.components';
+import { ToastrService } from 'ngx-toastr';
+import { take } from 'rxjs';
 
 @Component({
-  selector: "app-roles",
+  selector: 'app-roles',
   standalone: true,
   imports: [CommonModule, ButtonComponent, IsTableComponent, RolesAddComponent],
   template: `
@@ -37,7 +39,9 @@ import { IsTableComponent } from "../../../shared/ng-is-components/table.compone
       <div class="row p-0 m-0 mt-3">
         <div class="col-12">
           <ng-container *ngIf="roles.length > 0">
-            <is-table [data]="roles"></is-table>
+            <is-table
+              [data]="roles"
+              (action)="actionHandler($event)"></is-table>
             <app-roles-add
               *ngIf="showAddModal"
               (close)="showAddModal = false; fetchRoles()"></app-roles-add>
@@ -50,6 +54,7 @@ import { IsTableComponent } from "../../../shared/ng-is-components/table.compone
 })
 export class RolesComponent {
   private readonly roleService: RoleService = inject(RoleService);
+  private readonly toastr: ToastrService = inject(ToastrService);
 
   roles: RoleGetResponse[] = [];
   showAddModal: boolean = false;
@@ -60,5 +65,17 @@ export class RolesComponent {
 
   fetchRoles(): void {
     this.roleService.getAll().subscribe((resp: any) => (this.roles = resp));
+  }
+
+  actionHandler(action: { type: string; data: any }): void {
+    if (action.type === 'DELETE') {
+      this.roleService
+        .deleteRole(action.data.id)
+        .pipe(take(1))
+        .subscribe(() => {
+          this.toastr.success('Success', 'Role was deleted!');
+          this.fetchRoles();
+        });
+    }
   }
 }

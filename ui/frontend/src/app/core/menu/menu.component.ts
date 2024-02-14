@@ -64,13 +64,6 @@ export class MenuComponent {
       label: 'Global Map',
       icon: 'map-location',
       routerLink: 'map',
-      children: [
-        {
-          label: 'Roles',
-          icon: 'earth-europe',
-          routerLink: '/map',
-        },
-      ],
     },
     {
       label: 'Subscription plans',

@@ -21,7 +21,7 @@ export type UserGetResponse = {
   id: number;
   firstName: string;
   lastName: string;
-  userName: string;
+  username: string;
   email: string;
   subscriptionPlanId: number;
   timeUnitlSubscriptionExpires: {
