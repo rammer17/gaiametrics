@@ -4,8 +4,8 @@ import {
   style,
   animate,
   state,
-} from '@angular/animations';
-import { CommonModule } from '@angular/common';
+} from "@angular/animations";
+import { CommonModule } from "@angular/common";
 import {
   Directive,
   ElementRef,
@@ -23,7 +23,7 @@ import {
   ComponentFactoryResolver,
   Injector,
   Type,
-} from '@angular/core';
+} from "@angular/core";
 import {
   Observable,
   ReplaySubject,
@@ -35,10 +35,10 @@ import {
   takeUntil,
   tap,
   throttleTime,
-} from 'rxjs';
+} from "rxjs";
 
 @Directive({
-  selector: '[appTooltip]',
+  selector: "[appTooltip]",
   standalone: true,
 })
 export class TooltipDirective {
@@ -51,13 +51,13 @@ export class TooltipDirective {
   );
 
   //Tooltip text to display
-  @Input('appTooltip') tooltipText: string = '';
+  @Input("appTooltip") tooltipText: string = "";
   //Position of the tooltip relative to the host element
-  @Input('tooltipPos') tooltipPos: 'left' | 'right' | 'top' | 'bottom' = 'top';
+  @Input("tooltipPos") tooltipPos: "left" | "right" | "top" | "bottom" = "top";
   //Delay after which the tooltip appears
-  @Input('tooltipDelay') delay: number = 200;
+  @Input("tooltipDelay") delay: number = 200;
   //Duration in ms for which Enter and Exit animations occur
-  @Input('animationDuration') animationDuration: number = 150;
+  @Input("animationDuration") animationDuration: number = 150;
 
   tooltipComponentRef?: ComponentRef<TooltipComponent>;
   tooltip$?: Observable<any>;
@@ -69,9 +69,9 @@ export class TooltipDirective {
   destroy$?: ReplaySubject<any>;
 
   initTooltipObservable(): void {
-    const mouseEnter$ = fromEvent(this.el.nativeElement, 'mouseenter');
-    const mouseLeave$ = fromEvent(this.el.nativeElement, 'mouseleave');
-    const click$ = fromEvent(this.el.nativeElement, 'click');
+    const mouseEnter$ = fromEvent(this.el.nativeElement, "mouseenter");
+    const mouseLeave$ = fromEvent(this.el.nativeElement, "mouseleave");
+    const click$ = fromEvent(this.el.nativeElement, "click");
 
     this.destroy$ = new ReplaySubject<any>(1);
 
@@ -100,8 +100,8 @@ export class TooltipDirective {
       .subscribe();
 
     merge(
-      fromEvent(window, 'resize', { capture: true }),
-      fromEvent(window, 'resize', { capture: true }).pipe(throttleTime(15)),
+      fromEvent(window, "resize", { capture: true }),
+      fromEvent(window, "resize", { capture: true }).pipe(throttleTime(15)),
       mouseLeave$,
       click$
     )
@@ -123,21 +123,21 @@ export class TooltipDirective {
     let translateVal;
     //Set direction from which the tooltip appears depending on its position
     switch (this.tooltipPos) {
-      case 'top':
-        translateDir = 'Y';
-        translateVal = '';
+      case "top":
+        translateDir = "Y";
+        translateVal = "";
         break;
-      case 'bottom':
-        translateDir = 'Y';
-        translateVal = '-';
+      case "bottom":
+        translateDir = "Y";
+        translateVal = "-";
         break;
-      case 'left':
-        translateDir = 'X';
-        translateVal = '';
+      case "left":
+        translateDir = "X";
+        translateVal = "";
         break;
-      case 'right':
-        translateDir = 'X';
-        translateVal = '-';
+      case "right":
+        translateDir = "X";
+        translateVal = "-";
         break;
 
       default:
@@ -205,7 +205,7 @@ export class TooltipDirective {
 }
 
 @Component({
-  selector: 'is-tooltip',
+  selector: "is-tooltip",
   standalone: true,
   template: `
     <div
@@ -238,17 +238,17 @@ export class TooltipDirective {
       .tooltip-content {
         font-size: 0.875rem;
         line-height: 1.25rem;
-        border: 1px solid hsl(var(--input));
+        border: 1px solid var(--border-color);
         padding: 0.5rem 0.75rem;
         border-radius: calc(0.5rem - 2px);
-        background-color: hsl(var(--background));
-        color: hsl(var(--foreground));
+        background-color: var(--primary-light);
+        color: var(--text-dark);
         word-break: keep-all;
         line-break: strict;
         position: relative;
         text-align: center;
         height: min-content;
-        min-width: 200px;
+        min-width: 150px;
         max-width: 400px;
         z-index: 50;
       }
@@ -264,7 +264,7 @@ export class TooltipDirective {
         height: 0;
         border-left: 6px solid transparent;
         border-right: 6px solid transparent;
-        border-top: 6px solid hsl(var(--input));
+        border-top: 6px solid var(--border-color);
       }
       .tooltip-wrapper {
         position: relative;
@@ -275,22 +275,22 @@ export class TooltipDirective {
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
-    trigger('tooltipAnimation', [
-      state('void, false', style({ transform: 'scale(0)' })),
-      state('true', style({ transform: 'scale(1)' })),
-      transition('* => true', [
+    trigger("tooltipAnimation", [
+      state("void, false", style({ transform: "scale(0)" })),
+      state("true", style({ transform: "scale(1)" })),
+      transition("* => true", [
         style({
           opacity: 0,
-          transform: 'translate{{ td }}({{ tv }}50%) scale(0.5)',
+          transform: "translate{{ td }}({{ tv }}50%) scale(0.5)",
         }),
         animate(
-          '{{ ad }}ms',
-          style({ opacity: 1, transform: 'translate{{ td }}(0) scale(1)' })
+          "{{ ad }}ms",
+          style({ opacity: 1, transform: "translate{{ td }}(0) scale(1)" })
         ),
       ]),
-      transition('* => false', [
-        style({ opacity: 1, transform: 'scale(1)' }),
-        animate('{{ ad }}ms', style({ opacity: 0, transform: 'scale(0.95)' })),
+      transition("* => false", [
+        style({ opacity: 1, transform: "scale(1)" }),
+        animate("{{ ad }}ms", style({ opacity: 0, transform: "scale(0.95)" })),
       ]),
     ]),
   ],
@@ -302,14 +302,14 @@ class TooltipComponent {
   );
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
-  @ViewChild('tooltipEl') tooltipEl?: ElementRef<any>;
+  @ViewChild("tooltipEl") tooltipEl?: ElementRef<any>;
 
   showLeaveAnimation: boolean = true;
   targetEl?: ElementRef<any>;
-  tooltipPos: 'left' | 'right' | 'top' | 'bottom' = 'top';
-  tooltipText: string = '';
-  translateDirection: 'X' | 'Y' = 'Y';
-  translateValue: '-' | '' = '';
+  tooltipPos: "left" | "right" | "top" | "bottom" = "top";
+  tooltipText: string = "";
+  translateDirection: "X" | "Y" = "Y";
+  translateValue: "-" | "" = "";
   animationDuration: number = 150;
 
   ngAfterViewInit(): void {
@@ -337,7 +337,7 @@ class TooltipComponent {
     let tooltipArrowRotate;
 
     switch (this.tooltipPos) {
-      case 'top':
+      case "top":
         tooltipContainerY = `${
           targetDOMRect.top -
           tooltipContentEl.offsetHeight -
@@ -355,7 +355,7 @@ class TooltipComponent {
         }px`;
         break;
 
-      case 'bottom':
+      case "bottom":
         tooltipContainerY = `${
           targetDOMRect.top +
           targetDOMRect.height +
@@ -376,7 +376,7 @@ class TooltipComponent {
         tooltipArrowRotate = `180deg`;
         break;
 
-      case 'left':
+      case "left":
         tooltipContainerY = `${
           targetDOMRect.top -
           tooltipContentEl.offsetHeight / 2 +
@@ -397,7 +397,7 @@ class TooltipComponent {
         tooltipArrowRotate = `270deg`;
         break;
 
-      case 'right':
+      case "right":
         tooltipContainerY = `${
           targetDOMRect.top -
           tooltipContentEl.offsetHeight / 2 +
@@ -419,14 +419,14 @@ class TooltipComponent {
     }
 
     //* Set position of tooltip content
-    this.renderer.setStyle(this.host.nativeElement, 'top', tooltipContainerY);
-    this.renderer.setStyle(this.host.nativeElement, 'left', tooltipContainerX);
+    this.renderer.setStyle(this.host.nativeElement, "top", tooltipContainerY);
+    this.renderer.setStyle(this.host.nativeElement, "left", tooltipContainerX);
 
     //* Set position of tooltip arrow
-    this.renderer.setStyle(tooltipArrowEl, 'bottom', tooltipArrowY);
-    this.renderer.setStyle(tooltipArrowEl, 'left', tooltipArrowX);
+    this.renderer.setStyle(tooltipArrowEl, "bottom", tooltipArrowY);
+    this.renderer.setStyle(tooltipArrowEl, "left", tooltipArrowX);
     if (tooltipArrowRotate) {
-      this.renderer.setStyle(tooltipArrowEl, 'rotate', tooltipArrowRotate);
+      this.renderer.setStyle(tooltipArrowEl, "rotate", tooltipArrowRotate);
     }
   }
 }

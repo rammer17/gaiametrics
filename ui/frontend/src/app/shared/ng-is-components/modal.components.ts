@@ -140,7 +140,7 @@ import {
       transition(':enter', [
         style({
           opacity: 0,
-          transform: 'translateY(30%) scale(0.5)',
+          transform: 'scale(0.5)',
         }),
         animate(
           '150ms',

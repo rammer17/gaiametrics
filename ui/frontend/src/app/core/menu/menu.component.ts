@@ -1,14 +1,14 @@
-import { CommonModule } from '@angular/common';
-import { Component, HostBinding, HostListener, inject } from '@angular/core';
-import { PopoverDirective } from '../../shared/ng-is-components/popover.directive';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { MenuService } from './menu.service';
-import { Observable, combineLatest } from 'rxjs';
-import { TooltipDirective } from '../../shared/ng-is-components/tooltip.directive';
-import { ApplicationStateService } from '../../app-state.service';
+import { CommonModule } from "@angular/common";
+import { Component, HostBinding, HostListener, inject } from "@angular/core";
+import { PopoverDirective } from "../../shared/ng-is-components/popover.directive";
+import { Router, RouterLink, RouterLinkActive } from "@angular/router";
+import { MenuService } from "./menu.service";
+import { Observable, combineLatest } from "rxjs";
+import { TooltipDirective } from "../../shared/ng-is-components/tooltip.directive";
+import { ApplicationStateService } from "../../app-state.service";
 
 @Component({
-  selector: 'app-menu',
+  selector: "app-menu",
   standalone: true,
   imports: [
     CommonModule,
@@ -17,8 +17,8 @@ import { ApplicationStateService } from '../../app-state.service';
     TooltipDirective,
     RouterLinkActive,
   ],
-  templateUrl: './menu.component.html',
-  styleUrl: './menu.component.scss',
+  templateUrl: "./menu.component.html",
+  styleUrl: "./menu.component.scss",
 })
 export class MenuComponent {
   private readonly menuService: MenuService = inject(MenuService);
@@ -29,46 +29,46 @@ export class MenuComponent {
   showAccountPopover: boolean = false;
   menuList: any[] = [
     {
-      label: 'Administration',
-      icon: 'folder-gear',
-      routerLink: 'administration',
+      label: "Administration",
+      icon: "folder-gear",
+      routerLink: "administration",
       children: [
         {
-          label: 'Users',
-          icon: 'earth-europe',
-          routerLink: '/administration/users',
+          label: "Users",
+          icon: "users",
+          routerLink: "/administration/users",
         },
         {
-          label: 'Roles',
-          icon: 'earth-europe',
-          routerLink: '/administration/roles',
+          label: "Roles",
+          icon: "id-card-clip",
+          routerLink: "/administration/roles",
         },
         {
-          label: 'Plans',
-          icon: 'earth-europe',
-          routerLink: '/administration/plans',
+          label: "Plans",
+          icon: "wallet",
+          routerLink: "/administration/plans",
         },
         {
-          label: 'IoT Devices',
-          icon: 'earth-europe',
-          routerLink: '/administration/devices',
+          label: "IoT Devices",
+          icon: "sensor",
+          routerLink: "/administration/devices",
         },
         {
-          label: 'Device groups',
-          icon: 'earth-europe',
-          routerLink: '/administration/devicegroups',
+          label: "Device groups",
+          icon: "layer-group",
+          routerLink: "/administration/devicegroups",
         },
       ],
     },
     {
-      label: 'Global Map',
-      icon: 'map-location',
-      routerLink: 'map',
+      label: "Global Map",
+      icon: "map-location",
+      routerLink: "map",
     },
     {
-      label: 'Subscription plans',
-      icon: 'wallet',
-      routerLink: 'plans',
+      label: "Pricing",
+      icon: "wallet",
+      routerLink: "pricing",
     },
   ];
   resizingEvent = {
@@ -82,12 +82,12 @@ export class MenuComponent {
 
   vm$?: Observable<any>;
 
-  @HostBinding('class.resizing')
+  @HostBinding("class.resizing")
   get isResizing(): boolean {
     return this.resizingEvent.isResizing;
   }
 
-  @HostListener('window:mousemove', ['$event'])
+  @HostListener("window:mousemove", ["$event"])
   updatemenuWidth(event: MouseEvent) {
     if (!this.resizingEvent.isResizing) {
       return;
@@ -100,7 +100,7 @@ export class MenuComponent {
     this.menuService.setMenuWidth(newWidth);
   }
 
-  @HostListener('window:mouseup')
+  @HostListener("window:mouseup")
   stopResizing() {
     this.resizingEvent.isResizing = false;
   }
