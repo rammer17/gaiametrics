@@ -4,6 +4,7 @@ import { AuthenticationComponent } from './core/authentication/authentication.co
 import { GlobalMapComponent } from './features/global-map/global-map.component';
 import { authGuardFn } from './core/guards/auth.guard';
 import { administrationGuardFn } from './core/guards/administration.guard';
+import { SubscriptionPlansComponent } from './features/subscription-plans/subscription-plans.component';
 
 export const routes: Routes = [
   {
@@ -29,7 +30,11 @@ export const routes: Routes = [
       import('./features/administration/administration.routes').then(
         (m) => m.ADMINISTRATION_ROUTES
       ),
-    // canMatch: [administrationGuardFn],
+    canMatch: [administrationGuardFn],
+  },
+  {
+    path: 'pricing',
+    component: SubscriptionPlansComponent,
   },
   {
     path: '**',

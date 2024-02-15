@@ -27,6 +27,9 @@
 .text-accent {
   color: var(--text-accent) !important;
 }
+.text-muted {
+  color: var(--text-muted) !important;
+}
 
 .link {
   color: var(--text-accent) !important;
@@ -50,6 +53,7 @@
 
 :root {
   --text-light: #fefefe;
+  --text-muted: #9f9f9f;
   --text-medium: #414843;
   --text-dark: #0d0d0d;
   --text-accent: #80ca0e;
