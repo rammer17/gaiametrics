@@ -1,0 +1,39 @@
+.skeleton {
+  width: 100%;
+  height: 100%;
+  background: hsl(240 4.8% 95.9%);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  border-radius: 2rem;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.reading-widget,
+.reading-history {
+  border-radius: 2rem;
+  border: 1px solid var(--border-color);
+  background: var(--primary-light);
+}
+
+.icon-wrapper {
+  border-radius: 2rem;
+  background-color: var(--text-accent);
+  aspect-ratio: 1/1;
+}
+.history-li {
+  border-top: 1px solid var(--border-color);
+  transition: 0.15s;
+  color: var(--text-muted);
+  &:hover {
+    border-color: var(--text-accent);
+    background: var(--primary-medium);
+    color: var(--text-dark) !important;
+  }
+}
+.history-widget {
+  overflow-y: auto;
+}

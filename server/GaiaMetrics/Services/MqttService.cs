@@ -35,14 +35,15 @@ namespace GaiaMetrics.Services
 
             if (iotDevice is null) return ApiResponse.BadResponse(nameof(IoTDevice), Constants.NOT_FOUND);
 
-            List<string> list = new List<string>();
-            list.AddRange(iotDevice.Data);
-            list.Add(payload);
-            String[] str = list.ToArray();
+            var newData = new IoTDeviceData
+            {
+                IoTDeviceId = int.Parse(topic),
+                DataType = "temperature",
+                DataValue = payload,
+                Date = DateTime.UtcNow,
+            };
 
-            iotDevice.Data = str;
-
-            _dbContext.IoTDevices.Update(iotDevice);
+           _dbContext.IoTDevicesData.Add(newData);
             await _dbContext.SaveChangesAsync();
 
             return ApiResponse.CorrectResponse();

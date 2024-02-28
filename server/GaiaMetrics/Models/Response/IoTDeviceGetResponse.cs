@@ -1,4 +1,6 @@
-﻿namespace GaiaMetrics.Models.Response
+﻿using GaiaMetrics.Models.DB;
+
+namespace GaiaMetrics.Models.Response
 {
     public class IoTDeviceGetResponse
     {
@@ -6,7 +8,7 @@
         public string Name { get; set; }
         public double Latitude { get; set; }
         public double Longtitude { get; set; }
-        public ICollection<string>? Data { get; set; }
+        public ICollection<IoTDeviceData>? Data { get; set; }
 
     }
 }

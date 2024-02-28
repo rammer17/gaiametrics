@@ -73,7 +73,7 @@ import { ButtonComponent } from './button.component';
                   {{ row[column.type] }}
                 </td>
               </ng-container>
-              <td class="action-trigger">
+              <td class="action-trigger" *ngIf="!noActions">
                 <i
                   class="fa fa-solid fa-ellipsis"
                   (click)="onTogglePopover('ACTION', i)"
@@ -296,6 +296,7 @@ export class IsTableComponent {
   @Output('action') action: EventEmitter<any> = new EventEmitter<any>();
   @Input('headerTemplate') headerTemplate?: TemplateRef<any>;
   @Input('data') data: any[] = [];
+  @Input('noActions') noActions: boolean = false;
 
   fields: any;
   data$?: Observable<any>;

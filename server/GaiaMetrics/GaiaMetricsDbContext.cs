@@ -15,6 +15,7 @@ namespace GaiaMetrics
         public DbSet<RoleClaim> RoleClaims { get; set; }
         public DbSet<DeviceGroup> DeviceGroups { get; set; }
         public DbSet<IoTDevice> IoTDevices { get; set; }
+        public DbSet<IoTDeviceData> IoTDevicesData { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,11 +31,19 @@ namespace GaiaMetrics
                 .WithMany(r => r.RoleClaims)
                 .HasForeignKey(rc => rc.RoleId);
 
-            modelBuilder.Entity<IoTDevice>()
-                        .Property(e => e.Data)
-                        .HasConversion(
-                            v => string.Join(',', v),
-                            v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
+/*            modelBuilder.Entity<IoTDeviceData>().HasNoKey().ToTable(null, t => t.ExcludeFromMigrations());*/
+
+
+            modelBuilder.Entity<IoTDeviceData>()
+                .HasOne<IoTDevice>(s => s.IoTDevice)
+                .WithMany(g => g.Data)
+                .HasForeignKey(s => s.IoTDeviceId);
+
+            /*            modelBuilder.Entity<IoTDevice>()
+                                    .Property(e => e.Data)
+                                    .HasConversion(
+                                        v => string.Join(',', v),
+                                        v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));*/
         }
     }
 }

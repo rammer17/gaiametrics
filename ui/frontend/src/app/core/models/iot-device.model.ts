@@ -10,4 +10,5 @@ export type IoTDeviceGetResponse = {
   name: string;
   latitude: number;
   longtitude: number;
+  data: any;
 };

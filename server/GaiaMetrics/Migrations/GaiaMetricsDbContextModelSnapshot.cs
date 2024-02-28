@@ -105,10 +105,6 @@ namespace GaiaMetrics.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Data")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("DeviceGroupId")
                         .HasColumnType("int");
 
@@ -127,6 +123,35 @@ namespace GaiaMetrics.Migrations
                     b.HasIndex("DeviceGroupId");
 
                     b.ToTable("IoTDevices");
+                });
+
+            modelBuilder.Entity("GaiaMetrics.Models.DB.IoTDeviceData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("DataType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DataValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IoTDeviceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IoTDeviceId");
+
+                    b.ToTable("IoTDevicesData");
                 });
 
             modelBuilder.Entity("GaiaMetrics.Models.DB.Role", b =>
@@ -266,6 +291,17 @@ namespace GaiaMetrics.Migrations
                     b.Navigation("DeviceGroup");
                 });
 
+            modelBuilder.Entity("GaiaMetrics.Models.DB.IoTDeviceData", b =>
+                {
+                    b.HasOne("GaiaMetrics.Models.DB.IoTDevice", "IoTDevice")
+                        .WithMany("Data")
+                        .HasForeignKey("IoTDeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("IoTDevice");
+                });
+
             modelBuilder.Entity("GaiaMetrics.Models.DB.RoleClaim", b =>
                 {
                     b.HasOne("GaiaMetrics.Models.DB.Claim", "Claim")
@@ -312,6 +348,11 @@ namespace GaiaMetrics.Migrations
             modelBuilder.Entity("GaiaMetrics.Models.DB.DeviceGroup", b =>
                 {
                     b.Navigation("Devices");
+                });
+
+            modelBuilder.Entity("GaiaMetrics.Models.DB.IoTDevice", b =>
+                {
+                    b.Navigation("Data");
                 });
 
             modelBuilder.Entity("GaiaMetrics.Models.DB.Role", b =>

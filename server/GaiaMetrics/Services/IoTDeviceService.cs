@@ -15,15 +15,35 @@ namespace GaiaMetrics.Services
             _dbContext = dbContext;
         }
 
-        public async Task<ApiResponseData<ICollection<IoTDeviceGetResponse>>> GetAll()
+        public async Task<ApiResponseData<IoTDeviceGetResponse>> Get(int id)
         {
-            var data = _dbContext.IoTDevices.Select(x => new IoTDeviceGetResponse
+            var doesDeviceExist = await _dbContext.IoTDevices.AnyAsync(x => x.Id == id);
+            if (!doesDeviceExist)
+            {
+                return ApiResponseData<IoTDeviceGetResponse>.BadResponse(nameof(IoTDevice), Constants.NOT_FOUND);
+            }
+
+            var data = await _dbContext.IoTDevices.Where(y => y.Id == id).Select(x => new IoTDeviceGetResponse
             {
                 Id = x.Id,
                 Name = x.Name,
                 Latitude = x.Latitude,
                 Longtitude = x.Longtitude,
                 Data = x.Data
+            }).SingleOrDefaultAsync();
+
+            return ApiResponseData<IoTDeviceGetResponse>.CorrectResponse(data);
+        }
+
+        public async Task<ApiResponseData<ICollection<IoTDeviceGetResponse>>> GetAll()
+        {
+
+            var data = _dbContext.IoTDevices.Include(y => y.Data).Select(x => new IoTDeviceGetResponse
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Latitude = x.Latitude,
+                Longtitude = x.Longtitude
             }).ToList();
 
             return ApiResponseData<ICollection<IoTDeviceGetResponse>>.CorrectResponse(data);

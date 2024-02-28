@@ -1,0 +1,107 @@
+<!-- <ng-container *ngIf="showDeviceInfo">
+  <is-modal
+    [open]="showDeviceInfo"
+    [header]="header"
+    [context]="selectedDevice!"
+    [content]="content"
+    [width]="1000"
+    (close)="onCloseDeviceInfoWindow()"></is-modal>
+
+  <ng-template #header let-device>
+    <ng-container *ngIf="device.data?.length > 0">
+      <is-table [data]="device.data" [noActions]="true"></is-table>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #content let-device>
+    <div class="device-info-wrapper"></div>
+  </ng-template>
+</ng-container> -->
+
+<div class="container-fluid h-100">
+  <div class="row h-50">
+    <div class="col-12 h-100">
+      <div id="map" class="h-100 w-100"></div>
+    </div>
+  </div>
+  <div class="row h-50 bg-light p-5">
+    <div class="col-4 pt-5 px-5">
+      <div
+        *ngIf="!selectedDevice && loading; else widgetContent"
+        class="skeleton"></div>
+      <ng-template #widgetContent>
+        <div
+          *ngIf="selectedDevice; else noSelectedDevice"
+          class="reading-widget user-select-none h-100 w-100 p-5 d-flex flex-column justify-content-around align-items-start">
+          <!-- Select IoT Device! -->
+          <div class="d-flex align-items-center">
+            <div
+              class="icon-wrapper d-flex justify-content-center align-items-center p-4">
+              <i class="fa fa-solid fa-temperature-low text-light fs-1"></i>
+            </div>
+            <span class="fs-1 ms-3">
+              {{ selectedDevice.data[0].dataValue }}°
+            </span>
+          </div>
+          <div>
+            <div class="fs-1">{{ selectedDevice.name }}</div>
+            <div class="fs-5 text-muted">
+              {{ selectedDevice.data[0].date | date }}
+            </div>
+          </div>
+        </div>
+        <ng-template #noSelectedDevice>
+          <div
+            class="reading-widget h-100 w-100 d-flex justiy-content-center align-items-center">
+            <span class="text-muted fs-2 w-100 text-center">
+              Select IoT Device!
+            </span>
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+    <div class="col-8 pt-5 px-4">
+      <div class="reading-history h-100 w-100">
+        <div
+          *ngIf="!selectedDevice && loading; else historyContent"
+          class="skeleton"></div>
+
+        <ng-template #historyContent>
+          <ng-container *ngIf="selectedDevice?.data?.length > 0; else noSelectedDevice">
+            <div class="history-widget p-4 user-select-none">
+              <ul>
+                <li class="d-flex">
+                  <div style="width: 33.3%" class="fw-bold fs-4">Type</div>
+                  <div style="width: 33.3%" class="fw-bold fs-4">Value</div>
+                  <div style="width: 33.3%" class="fw-bold fs-4">Date</div>
+                </li>
+                <li
+                  *ngFor="let data of selectedDevice!.data"
+                  class="d-flex history-li cursor-pointer py-2 px-3">
+                  <div style="width: 33.3%" class="fs-5">
+                    {{ data.dataType }}
+                  </div>
+                  <div style="width: 33.3%" class="fs-5">
+                    {{ data.dataValue }}
+                  </div>
+                  <div style="width: 33.3%" class="fs-5">
+                    {{ data.date | date : "short" }}
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </ng-container>
+        </ng-template>
+
+        <ng-template #noSelectedDevice>
+          <div
+            class="h-100 w-100 d-flex justiy-content-center align-items-center">
+            <span class="text-muted fs-2 w-100 text-center">
+              Select IoT Device!
+            </span>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

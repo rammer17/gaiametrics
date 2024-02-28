@@ -1,4 +1,4 @@
-import { CommonModule, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ApplicationRef,
   ChangeDetectionStrategy,
@@ -9,7 +9,6 @@ import {
   ElementRef,
   EmbeddedViewRef,
   HostBinding,
-  HostListener,
   Injector,
   Input,
   Renderer2,

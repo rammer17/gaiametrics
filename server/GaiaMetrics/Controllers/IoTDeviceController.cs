@@ -24,7 +24,15 @@ namespace GaiaMetrics.Controllers
             return Ok(result.Data);
 
         }
-        
+
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IoTDeviceGet")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var result = await _iotService.Get(id);
+            return Ok(result.Data);
+        }
+
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IoTDeviceCreate")]
         public async Task<ActionResult> Register(IoTDeviceRegisterRequest request)

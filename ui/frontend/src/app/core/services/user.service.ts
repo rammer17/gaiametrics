@@ -14,7 +14,7 @@ export class UserService {
   private readonly http: HttpClient = inject(HttpClient);
 
   signUp(body: UserSignUpRequest): Observable<any> {
-    return this.http.post<any>(`http://backend:5001/User/Register`, body);
+    return this.http.post<any>(`/api/User/Register`, body);
   }
 
   signIn(body: UserSignInRequest): Observable<any> {

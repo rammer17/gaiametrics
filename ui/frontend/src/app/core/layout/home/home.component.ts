@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
+import { ButtonComponent } from '../../../shared/ng-is-components/button.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [],
+  imports: [ButtonComponent],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
-export class HomeComponent {
-
-}
+export class HomeComponent {}
