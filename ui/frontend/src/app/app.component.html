@@ -1,7 +1,15 @@
-<div class="app-container m-0 p-0">
-  <!-- <div class="h-100 col-2">
+<div class="app-container d-flex">
+  <ng-container *ngIf="user$ | async as user">
     <app-menu></app-menu>
+  </ng-container>
+
+  <div class="main p-5">
+    <router-outlet></router-outlet>
   </div>
-  <div class="main col-10">main</div> -->
-  <app-authentication></app-authentication>
+
+  <ng-http-loader
+    [entryComponent]="spinnerComponent"
+    [opacity]="'1'"
+    [minDuration]="400"
+    [filteredHeaders]="['SkipLoader']"></ng-http-loader>
 </div>

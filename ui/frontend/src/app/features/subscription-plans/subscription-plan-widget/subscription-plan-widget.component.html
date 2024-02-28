@@ -1,0 +1,21 @@
+<div
+  class="widget-wrapper text-dark user-select-none"
+  [ngClass]="{ recommended: plan.recommended }"
+  [@defaultAnimation]="true">
+  <div class="heading-wrapper">
+    <div class="fs-3 text-dark">{{ plan.name }}</div>
+    <div class="fs-1 text-dark">
+      {{ plan.price }}
+      <span class="fs-6 text-muted">{{ plan.payments }}</span>
+    </div>
+  </div>
+  <div class="benefits-wrapper">
+    <div class="benefit" *ngFor="let benefit of plan.benefits">
+      <i
+        class="fa fa-solid fa-{{
+          benefit.granted ? 'circle-check' : 'circle-xmark'
+        }} text-{{ benefit.granted ? 'accent' : 'danger' }} me-1"></i>
+      {{ benefit.label }}
+    </div>
+  </div>
+</div>

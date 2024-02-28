@@ -16,10 +16,12 @@ export type UserLoginResponse = {
 };
 
 export type UserGetResponse = {
+  token?: string;
+
   id: number;
   firstName: string;
   lastName: string;
-  userName: string;
+  username: string;
   email: string;
   subscriptionPlanId: number;
   timeUnitlSubscriptionExpires: {

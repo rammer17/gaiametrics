@@ -1,15 +1,14 @@
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { Injectable, inject } from "@angular/core";
-import { Observable } from "rxjs";
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable } from 'rxjs';
 import {
   RoleCreateRequest,
   RoleGetResponse,
   RoleUpdateRequest,
-} from "../models/role.model";
-import { GlobalResponse } from "../models/global-response.model";
+} from '../models/role.model';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class RoleService {
   private readonly http: HttpClient = inject(HttpClient);
@@ -18,16 +17,18 @@ export class RoleService {
     return this.http.get<RoleGetResponse[]>(`/api/Role/GetAll`);
   }
 
-  createRole(body: RoleCreateRequest): Observable<GlobalResponse> {
-    return this.http.post<GlobalResponse>(`/api/Role/Add`, body);
+  createRole(body: RoleCreateRequest): Observable<any> {
+    return this.http.post<any>(`/api/Role/Add`, body);
   }
 
-  updateRole(body: RoleUpdateRequest): Observable<GlobalResponse> {
-    return this.http.put<GlobalResponse>(`/api/Role/Update`, body);
+  updateRole(body: RoleUpdateRequest): Observable<any> {
+    return this.http.put<any>(`/api/Role/Update`, body);
   }
 
-  deleteRole(id: number): Observable<GlobalResponse> {
-    let queryParams = new HttpParams().set('id', id)
-    return this.http.delete<GlobalResponse>(`/api/Role/Delete`, {params: queryParams})
+  deleteRole(id: number): Observable<any> {
+    let queryParams = new HttpParams().set('id', id);
+    return this.http.delete<any>(`/api/Role/Delete`, {
+      params: queryParams,
+    });
   }
 }

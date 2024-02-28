@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  # portal:
+  #   build:
+  #     context: ./ui/frontend/
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "80:80"
+  # backend:
+  #   build:
+  #     context: ./server/GaiaMetrics/
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - sqlServerDb
+  #   ports:
+  #     - "5001:80"
+  #   restart: always
+  # sqlServerDb:
+  #   image: mcr.microsoft.com/mssql/server:2017-latest
+  #   container_name: sqlServerContainer
+  #   volumes:
+  #     - db_data:/var/opt/mssql/data
+  #     - ./sqlserver:/var/opt/mssql/restore_file
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - MSSQL_SA_PASSWORD=myStong_Password123#
+  #   ports:
+  #     - "1441:1433"
+  #   restart: always
+  mosquitto:
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto:/etc/mosquitto
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+volumes:
+  db_data:

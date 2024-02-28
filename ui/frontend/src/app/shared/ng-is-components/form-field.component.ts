@@ -24,6 +24,7 @@ import { FormErrorComponent } from './form-error.component';
       <div class="w-100 mb-2">{{ placeholder }}</div>
       <div [ngClass]="wrapperClass()">
         <input
+          autocomplete="off"
           #input
           id="input"
           [disabled]="disabled"
@@ -38,9 +39,10 @@ import { FormErrorComponent } from './form-error.component';
           *ngIf="inputIcon"
           [style]="{ color: iconColor }"
           [ngClass]="iconClass()"
-          class="fa fa-duotone fa-{{ inputIcon }} fa-{{ iconSize }}"></i>
+          class="fa fa-solid fa-{{ inputIcon }} fa-{{ iconSize }}"></i>
       </div>
       <app-form-error
+        *ngIf="!noError"
         [controlGroup]="hostFormGroup!.control!.controls"
         [controlName]="formControlName"></app-form-error>
     </div>
@@ -144,7 +146,7 @@ import { FormErrorComponent } from './form-error.component';
       }
     `,
   ],
-//   changeDetection: ChangeDetectionStrategy.OnPush,
+  //   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -155,6 +157,7 @@ import { FormErrorComponent } from './form-error.component';
 })
 export class FormFieldComponent implements ControlValueAccessor {
   @Input({ alias: 'formControlName', required: true }) formControlName: any;
+  @Input({ alias: 'noError', required: false }) noError: boolean = false;
   @Input({ alias: 'type', required: true }) type: InputTypes = 'text';
   @Input({ alias: 'placeholder', required: true }) placeholder: string = '';
   @Input({ alias: 'disabled', required: false }) disabled: boolean = false;
@@ -182,9 +185,11 @@ export class FormFieldComponent implements ControlValueAccessor {
       'input-wrapper': true,
       'input-destructive':
         this.hostFormGroup?.control?.controls[this.formControlName]?.invalid &&
-        this.hostFormGroup?.control?.controls[this.formControlName]?.touched,
+        this.hostFormGroup?.control?.controls[this.formControlName]?.touched &&
+        !this.noError,
       'input-success':
-        this.hostFormGroup?.control?.controls[this.formControlName]?.valid,
+        this.hostFormGroup?.control?.controls[this.formControlName]?.valid &&
+        !this.noError,
       'input-file-icon':
         this.type === 'file' && this.iconPos === 'left' && this.inputIcon,
       'input-icon': this.inputIcon && this.iconPos === 'left',

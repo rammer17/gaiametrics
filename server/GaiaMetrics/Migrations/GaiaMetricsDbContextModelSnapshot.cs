@@ -22,6 +22,21 @@ namespace GaiaMetrics.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("DeviceGroupUser", b =>
+                {
+                    b.Property<int>("DeviceGroupsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DeviceGroupsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("DeviceGroupUser");
+                });
+
             modelBuilder.Entity("GaiaMetrics.Models.DB.Claim", b =>
                 {
                     b.Property<int>("Id")
@@ -63,6 +78,80 @@ namespace GaiaMetrics.Migrations
                         .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("Contributors");
+                });
+
+            modelBuilder.Entity("GaiaMetrics.Models.DB.DeviceGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DeviceGroups");
+                });
+
+            modelBuilder.Entity("GaiaMetrics.Models.DB.IoTDevice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("DeviceGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longtitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceGroupId");
+
+                    b.ToTable("IoTDevices");
+                });
+
+            modelBuilder.Entity("GaiaMetrics.Models.DB.IoTDeviceData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("DataType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DataValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IoTDeviceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IoTDeviceId");
+
+                    b.ToTable("IoTDevicesData");
                 });
 
             modelBuilder.Entity("GaiaMetrics.Models.DB.Role", b =>
@@ -169,6 +258,21 @@ namespace GaiaMetrics.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("DeviceGroupUser", b =>
+                {
+                    b.HasOne("GaiaMetrics.Models.DB.DeviceGroup", null)
+                        .WithMany()
+                        .HasForeignKey("DeviceGroupsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GaiaMetrics.Models.DB.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("GaiaMetrics.Models.DB.Contributor", b =>
                 {
                     b.HasOne("GaiaMetrics.Models.DB.User", "User")
@@ -176,6 +280,26 @@ namespace GaiaMetrics.Migrations
                         .HasForeignKey("GaiaMetrics.Models.DB.Contributor", "UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("GaiaMetrics.Models.DB.IoTDevice", b =>
+                {
+                    b.HasOne("GaiaMetrics.Models.DB.DeviceGroup", "DeviceGroup")
+                        .WithMany("Devices")
+                        .HasForeignKey("DeviceGroupId");
+
+                    b.Navigation("DeviceGroup");
+                });
+
+            modelBuilder.Entity("GaiaMetrics.Models.DB.IoTDeviceData", b =>
+                {
+                    b.HasOne("GaiaMetrics.Models.DB.IoTDevice", "IoTDevice")
+                        .WithMany("Data")
+                        .HasForeignKey("IoTDeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("IoTDevice");
                 });
 
             modelBuilder.Entity("GaiaMetrics.Models.DB.RoleClaim", b =>
@@ -219,6 +343,16 @@ namespace GaiaMetrics.Migrations
             modelBuilder.Entity("GaiaMetrics.Models.DB.Claim", b =>
                 {
                     b.Navigation("RoleClaims");
+                });
+
+            modelBuilder.Entity("GaiaMetrics.Models.DB.DeviceGroup", b =>
+                {
+                    b.Navigation("Devices");
+                });
+
+            modelBuilder.Entity("GaiaMetrics.Models.DB.IoTDevice", b =>
+                {
+                    b.Navigation("Data");
                 });
 
             modelBuilder.Entity("GaiaMetrics.Models.DB.Role", b =>

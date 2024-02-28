@@ -1,10 +1,13 @@
 using GaiaMetrics;
+using GaiaMetrics.Extensions;
 using GaiaMetrics.Services;
+using GaiaMetrics.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MQTTnet;
+using MQTTnet.Client;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,7 +48,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<GaiaMetricsDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection"));
-});
+}, ServiceLifetime.Transient, ServiceLifetime.Singleton);
 
 //Enable JWT authenitcation
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -62,22 +65,37 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
-builder.Services.AddAuthorization(options =>
-{
-    //Role policies and claims
-    options.AddPolicy("RoleGet", policy =>
-        policy.RequireClaim("RoleClaim", "RoleGetClaim"));
-    options.AddPolicy("RoleAdd", policy =>
-        policy.RequireClaim("RoleClaim", "RoleAddClaim"));
-    options.AddPolicy("RoleUpdate", policy =>
-        policy.RequireClaim("RoleClaim", "RoleUpdateClaim"));
-    options.AddPolicy("RoleDelete", policy =>
-        policy.RequireClaim("RoleClaim", "RoleDeleteClaim"));
-});
+//Set up authorization policies
+AutorizationPolicyExtension.AddAuthorization(builder.Services);
+
+ConfigurationManager configuration = builder.Configuration;
+
+//Map broker host settings
+BrokerHostSettings brokerHostSettings = new BrokerHostSettings();
+configuration.GetSection(nameof(BrokerHostSettings)).Bind(brokerHostSettings);
+
+//Map client settings
+ClientSettings clientSettings = new ClientSettings();
+configuration.GetSection(nameof(ClientSettings)).Bind(clientSettings);
+
 
 //Set up service class to interface mappings, set up services for dependency injection
-builder.Services.AddScoped<ICryptographyService, CryptographyService>();
-builder.Services.AddScoped<IJwtService, JwtService>();
+ServiceCollectionExtension.AddServices(builder.Services);
+// ServiceCollectionExtension.MigrateDatabase(builder.Services);
+
+// Add services to the container.
+builder.Services.AddSingleton(sp =>
+{
+    var options = new MqttClientOptionsBuilder()
+        .WithClientId("ClientId")
+        .WithTcpServer(brokerHostSettings.Host, brokerHostSettings.Port)
+/*        .WithCredentials(clientSettings.UserName, clientSettings.Password)*/
+        .Build();
+
+    return options;
+});
+
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -87,6 +105,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
 app.UseAuthorization();
 app.UseAuthentication();

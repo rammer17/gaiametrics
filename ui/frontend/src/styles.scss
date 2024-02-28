@@ -1,9 +1,18 @@
-/* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: "Geist Sans";
+  src: url("./assets/fonts/Geist/._Geist-Regular.woff2") format("woff2"),
+    url("./assets/fonts/Geist/._Geist-Regular.otf") format("otf");
+  font-weight: normal;
+  font-style: normal;
+}
 
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  font-family: "Geist Sans", sans-serif;
+  font-weight: normal;
+  font-style: normal;
 }
 
 .text-light {
@@ -18,6 +27,9 @@
 .text-accent {
   color: var(--text-accent) !important;
 }
+.text-muted {
+  color: var(--text-muted) !important;
+}
 
 .link {
   color: var(--text-accent) !important;
@@ -29,9 +41,20 @@
   cursor: pointer;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.divider {
+  background-color: var(--border-color);
+  height: 1px;
+  margin: 0.75rem 0px;
+}
+
 :root {
   --text-light: #fefefe;
-  --text-medium: #5d6d62;
+  --text-muted: #9f9f9f;
+  --text-medium: #414843;
   --text-dark: #0d0d0d;
   --text-accent: #80ca0e;
 
@@ -45,7 +68,7 @@
 
   --border-radius: 12px;
   --border-width: 1px;
-  --border-color: #4b4e4c;
+  --border-color: #4f5d542d;
 
   --font-sm: 0.5em;
   --font-md: 1em;
@@ -53,4 +76,6 @@
 
   --success: #80ca0e;
   --destructive: #7f1d1d;
+
+  --menu-width: 300px;
 }

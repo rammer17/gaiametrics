@@ -27,6 +27,7 @@ import { CommonModule } from '@angular/common';
           [pull]="iconPos"
           [style]="{ color: iconColor }"
           [icon]="['fas', icon]"></fa-icon> -->
+        <i class="fa fa-solid fa-{{ icon }} me-2"></i>
       </ng-container>
       <ng-container *ngIf="loading === true">
         <!-- <fa-icon
@@ -45,7 +46,7 @@ import { CommonModule } from '@angular/common';
   styles: [
     `
       .is-button {
-        padding: 0rem 1rem;
+        padding: 0.75rem 1.25rem;
         border-radius: 0.5rem;
         border: none;
         transition: 0.2s;
@@ -62,10 +63,10 @@ import { CommonModule } from '@angular/common';
         background-color: var(--primary-darker);
       }
       .is-button-primary:hover:not([disabled]) {
-        background-color: var(--primary-darker);
+        background-color: var(--primary-dark);
       }
       .is-button-primary:enabled:focus {
-        box-shadow: 0 0 0 2px var(--primary-darker);
+        box-shadow: 0 0 0 2px var(--primary-dark);
       }
 
       .is-button-secondary {

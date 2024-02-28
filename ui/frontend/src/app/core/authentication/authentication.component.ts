@@ -10,12 +10,26 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { UserSignInRequest, UserSignUpRequest } from '../models/user.model';
-import { EMPTY, catchError } from 'rxjs';
+import {
+  UserGetResponse,
+  UserLoginResponse,
+  UserSignInRequest,
+  UserSignUpRequest,
+} from '../models/user.model';
+import {
+  EMPTY,
+  Observable,
+  catchError,
+  combineLatest,
+  of,
+  switchMap,
+} from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserService } from '../services/user.service';
 import { FormFieldComponent } from '../../shared/ng-is-components/form-field.component';
 import { PopoverDirective } from '../../shared/ng-is-components/popover.directive';
+import { Router } from '@angular/router';
+import { ApplicationStateService } from '../../app-state.service';
 
 @Component({
   selector: 'app-authentication',
@@ -37,7 +51,10 @@ export class AuthenticationComponent {
   private readonly fb: FormBuilder = inject(FormBuilder);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly userService: UserService = inject(UserService);
-
+  private readonly router: Router = inject(Router);
+  private readonly appStateService: ApplicationStateService = inject(
+    ApplicationStateService
+  );
   // Form props
   signInForm?: FormGroup;
   signUpForm?: FormGroup;
@@ -55,6 +72,8 @@ export class AuthenticationComponent {
     this.bannerAnimationState = !this.bannerAnimationState;
     this.signInFormAnimationState = !this.signInFormAnimationState;
     this.signUpFormAnimationState = !this.signUpFormAnimationState;
+    this.signInForm?.reset();
+    this.signUpForm?.reset();
   }
 
   onSignUp(): void {
@@ -70,6 +89,7 @@ export class AuthenticationComponent {
     const method: string = 'signUp';
     const nextHandler: (resp: any) => void = () => {
       console.log('SIGN UP SUCCESS');
+      this.changeCurrentIndex();
     };
 
     this.httpRequestHandler(method, body, nextHandler.bind(this));
@@ -82,12 +102,21 @@ export class AuthenticationComponent {
       userName: this.signInForm.get('userName')?.value,
       password: this.signInForm.get('password')?.value,
     };
-    const method: string = 'signIn';
-    const nextHandler: (resp: any) => void = () => {
-      console.log('SIGN IN SUCCESS');
-    };
 
-    this.httpRequestHandler(method, body, nextHandler.bind(this));
+    this.userService
+      .signIn(body)
+      .pipe(
+        switchMap((resp: UserLoginResponse) => {
+          localStorage.setItem('token', resp.token);
+          return this.userService.get();
+        }),
+        catchError((err: any) => EMPTY),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((resp: UserGetResponse) => {
+        this.appStateService.updateUser(resp);
+        this.router.navigateByUrl('/home');
+      });
   }
 
   private httpRequestHandler(

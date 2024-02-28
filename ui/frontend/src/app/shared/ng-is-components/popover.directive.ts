@@ -1,4 +1,4 @@
-import { CommonModule, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ApplicationRef,
   ChangeDetectionStrategy,
@@ -201,6 +201,7 @@ export class PopoverDirective {
         line-break: strict;
         min-width: 100px;
         max-width: 400px;
+        // width: 100%;
         overflow: hidden;
         z-index: 10000;
       }

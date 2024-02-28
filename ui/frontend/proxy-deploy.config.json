@@ -1,0 +1,10 @@
+{
+  "/api": {
+    "target": "http://api:5001/",
+    "pathRewrite": {
+      "^/api": ""
+    },
+    "secure": false,
+    "logLevel": "debug"
+  }
+}

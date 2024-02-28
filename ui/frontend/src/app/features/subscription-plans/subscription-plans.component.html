@@ -1,0 +1,8 @@
+<div class="container-fluid h-100">
+  <div class="row d-flex align-items-center h-100">
+    <div class="col-4" *ngFor="let plan of plans">
+      <app-subscription-plan-widget
+        [plan]="plan"></app-subscription-plan-widget>
+    </div>
+  </div>
+</div>

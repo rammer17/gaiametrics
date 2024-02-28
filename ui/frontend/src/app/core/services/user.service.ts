@@ -1,6 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { UserSignInRequest, UserSignUpRequest } from '../models/user.model';
+import {
+  UserGetResponse,
+  UserSignInRequest,
+  UserSignUpRequest,
+} from '../models/user.model';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -15,5 +19,22 @@ export class UserService {
 
   signIn(body: UserSignInRequest): Observable<any> {
     return this.http.post<any>(`/api/User/Login`, body);
+  }
+
+  get(): Observable<UserGetResponse> {
+    return this.http.get<UserGetResponse>(`/api/User/Get`);
+  }
+
+  getAll(): Observable<UserGetResponse[]> {
+    return this.http.get<UserGetResponse[]>(`/api/User/GetAll`);
+  }
+
+  getAllNoLoader(): Observable<UserGetResponse[]> {
+    const headers = new HttpHeaders({
+      SkipLoader: ``,
+    });
+    return this.http.get<UserGetResponse[]>(`/api/User/GetAll`, {
+      headers: headers,
+    });
   }
 }

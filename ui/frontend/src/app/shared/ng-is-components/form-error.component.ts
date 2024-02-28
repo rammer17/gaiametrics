@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Input, inject } from '@angular/core';
-import { PopoverDirective } from './popover.directive';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-form-error',
