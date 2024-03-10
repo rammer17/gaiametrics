@@ -81,7 +81,7 @@ configuration.GetSection(nameof(ClientSettings)).Bind(clientSettings);
 
 //Set up service class to interface mappings, set up services for dependency injection
 ServiceCollectionExtension.AddServices(builder.Services);
-// ServiceCollectionExtension.MigrateDatabase(builder.Services);
+ServiceCollectionExtension.MigrateDatabase(builder.Services);
 
 // Add services to the container.
 builder.Services.AddSingleton(sp =>
