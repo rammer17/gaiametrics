@@ -18,7 +18,7 @@ export class UserService {
   }
 
   signIn(body: UserSignInRequest): Observable<any> {
-    return this.http.post<any>(`/api/User/Login`, body);
+    return this.http.post<any>(`http://iot.tugab.bg:5001/User/Login`, body);
   }
 
   get(): Observable<UserGetResponse> {
